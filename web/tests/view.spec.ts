@@ -146,3 +146,49 @@ test('ennusteen vanheneminen piilottaa yhteenvedon seuraavassa päivityksessä',
   await expect(page.getByText(/7,9 cm/)).toHaveCount(0);
   await expect(page.getByText('Vanhentunut', { exact: true })).toBeVisible();
 });
+
+test('vastaamatta jäävä pyyntö merkitsee yhteyskatkon ja sallii toipumisen', async ({ page }) => {
+  let count = 0;
+  let release: (() => void) | undefined;
+  await page.clock.install();
+  await page.route('**/api/water-level/hamina', async route => {
+    count++;
+    if (count === 2) {
+      await new Promise<void>(resolve => { release = resolve; });
+      await route.abort().catch(() => {});
+      return;
+    }
+    await route.fulfill({ json: data });
+  });
+  await page.goto('/');
+  await expect(page.getByText(/7,9 cm/)).toBeVisible();
+  await page.clock.fastForward('01:00');
+  await expect.poll(() => count).toBe(2);
+  await page.clock.fastForward('00:31');
+  await expect(page.getByRole('alert')).toBeVisible({ timeout: 1000 });
+  await expect(page.getByText(/7,9 cm/)).toHaveCount(0);
+  release?.();
+  await page.clock.fastForward('00:30');
+  await expect(page.getByText(/7,9 cm/)).toBeVisible();
+});
+
+test('vanha valinta ei jää näkyviin ennusteen vaihtuessa', async ({ page }) => {
+  let changed = false;
+  await page.route('**/api/water-level/hamina', route => route.fulfill({
+    json: changed ? { ...data, forecast: { ...data.forecast, points: [{ time: '2026-10-25T02:00:00Z', valueCm: 22 }] } } : data
+  }));
+  await page.goto('/');
+  await page.locator('svg circle').first().click();
+  await expect(page.getByText(/40,0 cm/).last()).toBeVisible();
+  changed = true;
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  await expect(page.getByText(/40,0 cm/)).toHaveCount(0);
+});
+
+test('päättyneen ennusteen yhteenveto kertoo todellisen syyn', async ({ page }) => {
+  await page.route('**/api/water-level/hamina', route => route.fulfill({
+    json: { ...data, summary: null, summaryReason: 'no_future_values', forecast: { ...data.forecast, points: [], hasFutureValues: false, lastShownAt: null } }
+  }));
+  await page.goto('/');
+  await expect(page.getByText(/ei ole tulevia ennustearvoja/i)).toBeVisible();
+});

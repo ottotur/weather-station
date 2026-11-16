@@ -21,6 +21,12 @@ Selaintestit käsittävät 360, 768 ja 1024 CSS-pikselin leveydet,
 koonmuutokset ja emuloidun kosketuksen. Emulaatio ei todista oikean laitteen
 kosketuksen, selaimen tai suorituskyvyn toimintaa.
 
+2026-11-17 katselmointikorjausten jälkeen suoritettiin uudelleen Go:n
+race-testit, `go vet`, Svelte-tyyppitarkistus ja rakennus sekä 12
+Playwright-testiä; kaikki onnistuivat. Uudet testit kattavat vastaamatta
+jäävän rajapintapyynnön, ennusteesta poistuneen kaaviovalinnan ja päättyneen
+ennusteen yhteenvedon syyn. Tämä ei muuta laitehyväksynnän tilaa.
+
 ## Windows-selaimen rajattu automaattitarkistus
 
 Windowsin Google Chrome 157.0.8103.52 avasi WSL-palvelimen osoitteessa

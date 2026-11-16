@@ -14,7 +14,7 @@
   let data: Response | null = $state(null);
   let disconnected = $state(false);
   let loading = $state(true);
-  let selected: Point | null = $state(null);
+  let selectedTime: string | null = $state(null);
   let pending = false;
   const date = new Intl.DateTimeFormat('fi-FI', {
     timeZone: 'Europe/Helsinki', day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'shortOffset'
@@ -25,18 +25,32 @@
   const attemptMessage = (attempt: Attempt) => attempt.errorCode === 'cache_durability_uncertain'
     ? 'Tallennuksen pysyvyys on epävarma; aiempi tieto on käytössä.'
     : 'Viimeisin haku epäonnistui';
+  const summaryMessage = (reason: string) => ({
+    observation_missing: 'Havainto puuttuu.',
+    observation_stale: 'Havainto on vanhentunut.',
+    forecast_missing: 'Ennuste puuttuu.',
+    forecast_stale: 'Ennuste on vanhentunut.',
+    no_future_values: 'Ennusteessa ei ole tulevia ennustearvoja.'
+  }[reason] ?? 'Vertailuun tarvittavat tiedot eivät ole saatavilla.');
 
   async function refresh() {
     if (pending) return;
     pending = true;
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 10_000);
     try {
-      const response = await fetch('/api/water-level/hamina', { cache: 'no-store' });
+      const response = await fetch('/api/water-level/hamina', { cache: 'no-store', signal: controller.signal });
       if (!response.ok) throw new Error('Palvelinvirhe');
-      data = await response.json() as Response;
+      const next = await response.json() as Response;
+      if (selectedTime && !next.forecast.points.some(point => point.time === selectedTime && point.valueCm !== null)) {
+        selectedTime = null;
+      }
+      data = next;
       disconnected = false;
     } catch {
       disconnected = true;
     } finally {
+      window.clearTimeout(timeout);
       loading = false;
       pending = false;
     }
@@ -51,6 +65,7 @@
   });
 
   let points: Point[] = $derived.by(() => data?.forecast.points ?? []);
+  let selected = $derived(points.find(point => point.time === selectedTime && point.valueCm !== null) ?? null);
   let finite = $derived(points.filter((p): p is Point & { valueCm: number } => p.valueCm !== null));
   let min = $derived(finite.length ? Math.min(...finite.map(p => p.valueCm)) : 0);
   let max = $derived(finite.length ? Math.max(...finite.map(p => p.valueCm)) : 1);
@@ -103,7 +118,7 @@
             {#if point.valueCm !== null}
               <circle cx={x(point, points)} cy={y(point.valueCm, min, max)} r="7" fill="#125f86" tabindex="0"
                 role="button" aria-label={`${formatTime(point.time)}, ${number(point.valueCm)} cm`}
-                onclick={() => selected = point} onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') selected = point; }} />
+                onclick={() => selectedTime = point.time} onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') selectedTime = point.time; }} />
             {/if}
           {/each}
         </svg>
@@ -121,7 +136,7 @@
         <p>Nousu: {data.summary.rise.changeCm ? `${number(data.summary.rise.changeCm)} cm` : 'ei nousua havaintotasosta'}{#if data.summary.rise.at} ({formatTime(data.summary.rise.at)}){/if}</p>
         <p>Lasku: {data.summary.fall.changeCm ? `${number(data.summary.fall.changeCm)} cm` : 'ei laskua havaintotasosta'}{#if data.summary.fall.at} ({formatTime(data.summary.fall.at)}){/if}</p>
         {#if data.summary.hasGaps}<p>Ennusteessa on aukkoja; yhteenveto koskee saatavilla olevia arvoja.</p>{/if}
-      {:else}<p>Yhteenveto ei ole saatavilla, koska tiedot puuttuvat, ovat vanhentuneet tai palvelinyhteys on poikki.</p>{/if}
+      {:else}<p>Yhteenveto ei ole saatavilla. {disconnected ? 'Palvelinyhteys on poikki.' : summaryMessage(data.summaryReason)}</p>{/if}
     </section>
   {/if}
   <footer><p>Lähde: Ilmatieteen laitos, avoin data, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
