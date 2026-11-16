@@ -1,0 +1,21 @@
+## Git Workflow
+
+- The `main` branch must always contain stable, working code.
+- Never make code changes or commits directly on `main`.
+- Before starting implementation, check the current Git status and branch.
+- Create a new branch from `main` for each OpenSpec change:
+  - `feature/<name>` for features
+  - `fix/<name>` for bug fixes
+  - `docs/<name>` for documentation-only changes
+- Commit completed logical units of work to the current feature branch.
+- Use conventional commit messages (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`).
+- Include relevant OpenSpec artifacts in version control.
+- Run applicable tests, linting and build checks before proposing a merge.
+- Never commit secrets, credentials, `.env` files or generated dependencies.
+- Never force-push or discard existing uncommitted work.
+- Do not merge into `main` without explicit user approval.
+- After completing a change, report:
+  - Current branch
+  - Commits created
+  - Tests performed and their results
+  - Whether the change is ready to merge into `main`
