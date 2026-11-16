@@ -100,6 +100,27 @@ https://opendata.fmi.fi/meta?observableProperty=forecast&param=WLEVN2K_PT1S_INST
 https://opendata.fmi.fi/meta?observableProperty=forecast&param=SeaLevelN2000&language=eng
 ```
 
+### `sealevel-property.xml`
+
+- [Tiedosto](sealevel-property.xml)
+- Hakuaika: `2026-11-16T18:40:10.344770Z`
+- Dokumentaatio: ennustevastauksen `SeaLevel`-sarjan
+  `om:observedProperty`-linkki; käyttäjä osoitti saman linkin jatkoselvitykseen.
+- Tulos: `Water level`, yksikkö **cm**. Tämä todistaa `SeaLevel`-kentän
+  yksikön, ei sellaisenaan `SeaLevelN2000`-kentän yksikköä.
+- SHA-256: `5a5b8083e9d6264fa91865abb695be71259373092192a0c5b13a4933aa9782df`
+- Suoritettu kysely:
+
+```text
+https://opendata.fmi.fi/meta?observableProperty=forecast&param=SeaLevel&language=eng
+```
+
+N2000-kentän metatietolinkki tarkistettiin uudelleen
+`2026-11-16T18:40:10.369542Z`: HTTP 200, edelleen tyhjä elementti ja
+tavut täsmälleen samat kuin säilytetyssä `forecast-property.xml`:ssä.
+Samaa runkoa ei tallennettu kahdesti. Havainto- tai ennusteaineistoa
+ei haettu uudelleen tässä jatkotarkistuksessa.
+
 ## Rajattu löytöhaku
 
 Havaintosuureen nimi selvitettiin pikaohjeen mukaisella yhden ajanhetken
