@@ -37,13 +37,24 @@ Käyttäjä ilmoitti 2026-11-16 testanneensa näkymää Windowsissa selaimella
 Brave 1.99.57 (64-bittinen, Chromium 157.0.8103.79): hänen mukaansa kaikki
 näytti toimivan. Käyttäjä vahvisti erikseen, että tuntitaulukon avaaminen,
 kaavion pisteen valinta ja näkymä kapeassa selainikkunassa toimivat oikein.
-Ikkunan tarkkaa leveyttä, häiriötiloja tai kosketusemulaatiota ei ilmoitettu,
-joten niitä ei tulkita erikseen hyväksytyiksi.
+Ikkunan tarkkaa leveyttä tai kosketusemulaation käyttöä ei ilmoitettu.
+
+Käyttäjän ilmoittamat häiriötestien tulokset:
+
+- Paikallisen Go-palvelimen pysäytyksen jälkeen yhteyden katkeamisesta näkyi
+  ilmoitus, aiempi aineisto säilyi näkyvissä ja yhteenvedot poistuivat.
+  Palvelimen uudelleenkäynnistyksen jälkeen näkymä palautui normaaliksi.
+- Kun lähdeosoitteeksi asetettiin `http://127.0.0.1:1/wfs`, näkyi
+  ilmoitus viimeisimmän haun epäonnistumisesta, mutta aiempi havainto ja
+  ennuste säilyivät näkyvissä.
+
+Nämä ovat käyttäjän Windows-Bravessa raportoimia tuloksia; WSL:n Playwrightin
+kosketusemulaatio on erillinen automaattitesti eikä oikean laitteen testi.
+WSL:n localhost-välitys toimi testissä; ohjeistetut vaiheet eivät edellyttäneet
+palomuuri- tai verkkoasetusten muuttamista.
 
 ## Avoimet hyväksynnät
 
-- Windows 11:n selaimen manuaaliset häiriötilojen tarkistukset sekä
-  kosketusemulaation rajat ovat vielä erittelemättä.
 - Raspberry Pi:n käyttöjärjestelmää ei ole asennettu eikä laitetta ole ajettu
   tai testattu. Ristiinkäännös ei ole Pi-ajotesti.
 - Oikeiden puhelinten Safari-, Android Chrome- ja Firefox-testit sekä iPadin
