@@ -19,3 +19,20 @@
   - Commits created
   - Tests performed and their results
   - Whether the change is ready to merge into `main`
+
+## Agent skills
+
+### Issue tracker
+
+For reading, creating or updating issues, use GitHub Issues.
+Read `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+For issue classification and readiness labels, use the mappings in
+`docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Before codebase exploration or domain decisions, read the single-context
+consumer rules in `docs/agents/domain.md`.
