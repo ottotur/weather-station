@@ -74,6 +74,7 @@ on käyttäjän hyväksymä oletus, ei suoraan varmennettu yksikkömetatieto.
 FMI:n selvityksessä tarkistetut käyttörajat ja niiden lähteet:
 [vedenkorkeusselvitys](feasibility/water-level.md#dokumentoidut-kyselyt-ja-käyttöehdot).
 Hakuvälit ovat 10 ja 30 minuuttia. Toteutuksen koko ketjun testaus on kesken.
+Rajapinnan kentät ja esimerkit: [api.md](api.md).
 
 ## Nykyiset automaattiset tarkistukset
 

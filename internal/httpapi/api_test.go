@@ -134,3 +134,30 @@ func TestConcurrentClientsDoNotFetch(t *testing.T) {
 		t.Fatal("API triggered source fetch")
 	}
 }
+
+func TestPartialResponseSeparatesFreshnessAndAttempt(t *testing.T) {
+	now := time.Date(2026, 11, 16, 18, 0, 0, 0, time.UTC)
+	obs := &waterlevel.Observation{ValueCM: 32.1, ObservedAt: now.Add(-time.Minute), FetchedAt: now}
+	seed := seeded{observation: obs}
+	source := &countingSource{}
+	service := waterlevel.NewService(source, seed, func() time.Time { return now })
+	service.RefreshObservation(context.Background())
+	api := API{Service: service, Now: func() time.Time { return now }}
+	res := httptest.NewRecorder()
+	api.ServeHTTP(res, httptest.NewRequest(http.MethodGet, "/", nil))
+	var data map[string]any
+	if err := json.Unmarshal(res.Body.Bytes(), &data); err != nil {
+		t.Fatal(err)
+	}
+	observation := data["observation"].(map[string]any)
+	if observation["status"] != "fresh" || observation["attempt"].(map[string]any)["errorCode"] != "source_error" {
+		t.Fatalf("%v", observation)
+	}
+	if data["forecast"].(map[string]any)["data"] != nil || data["summary"] != nil || data["summaryReason"] != "forecast_missing" {
+		t.Fatalf("%v", data)
+	}
+	sourceInfo := data["source"].(map[string]any)
+	if sourceInfo["licence"] != "CC BY 4.0" || sourceInfo["forecastUnit"] != "assumed-cm" {
+		t.Fatalf("%v", sourceInfo)
+	}
+}
