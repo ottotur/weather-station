@@ -2,9 +2,13 @@ package waterlevel
 
 import (
 	"context"
+	"errors"
 	"sync"
 	"time"
 )
+
+// ErrDurabilityUncertain means the file was replaced but directory sync failed.
+var ErrDurabilityUncertain = errors.New("cache durability uncertain")
 
 type Source interface {
 	Observation(context.Context, time.Time) (*Observation, error)
@@ -81,6 +85,9 @@ func (s *Service) RefreshObservation(ctx context.Context) {
 	if err == nil {
 		err = s.store.SaveObservation(o)
 		code = "cache_error"
+		if errors.Is(err, ErrDurabilityUncertain) {
+			code = "cache_durability_uncertain"
+		}
 	}
 	attempt := Attempt{At: &now, Result: "success"}
 	if err != nil {
@@ -106,6 +113,9 @@ func (s *Service) RefreshForecast(ctx context.Context) {
 	if err == nil {
 		err = s.store.SaveForecast(f)
 		code = "cache_error"
+		if errors.Is(err, ErrDurabilityUncertain) {
+			code = "cache_durability_uncertain"
+		}
 	}
 	attempt := Attempt{At: &now, Result: "success"}
 	if err != nil {

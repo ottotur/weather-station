@@ -1,6 +1,8 @@
 package cache
 
 import (
+	"context"
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
@@ -8,6 +10,72 @@ import (
 
 	"weather-station/internal/waterlevel"
 )
+
+type observationSource struct{ value *waterlevel.Observation }
+
+func (s observationSource) Observation(context.Context, time.Time) (*waterlevel.Observation, error) {
+	return s.value, nil
+}
+func (s observationSource) Forecast(context.Context, time.Time) (*waterlevel.Forecast, error) {
+	return nil, errors.New("not used")
+}
+
+func TestSyncFailureAfterReplacement(t *testing.T) {
+	now := time.Date(2026, 11, 16, 18, 0, 0, 0, time.UTC)
+	dir := t.TempDir()
+	normal := Store{Dir: dir}
+	old := &waterlevel.Observation{ValueCM: 10, ObservedAt: now, FetchedAt: now}
+	next := &waterlevel.Observation{ValueCM: 20, ObservedAt: now, FetchedAt: now}
+	v := 40.0
+	forecast := &waterlevel.Forecast{AnalysisTime: now, ResultTime: now, FetchedAt: now, UnitStatus: "assumed-cm", Points: []waterlevel.Point{{Time: now, ValueCM: &v}}}
+	if err := normal.SaveObservation(old); err != nil {
+		t.Fatal(err)
+	}
+	if err := normal.SaveForecast(forecast); err != nil {
+		t.Fatal(err)
+	}
+	broken := Store{Dir: dir, syncDir: func(string) error { return errors.New("simulated sync failure") }}
+	service := waterlevel.NewService(observationSource{next}, broken, func() time.Time { return now })
+	service.RefreshObservation(context.Background())
+	snapshot := service.Snapshot()
+	if snapshot.Observation.ValueCM != 10 || snapshot.ObservationAttempt.ErrorCode == nil || *snapshot.ObservationAttempt.ErrorCode != "cache_durability_uncertain" {
+		t.Fatalf("unexpected in-memory state: %+v", snapshot)
+	}
+	if snapshot.Forecast == nil || *snapshot.Forecast.Points[0].ValueCM != v {
+		t.Fatal("other dataset changed")
+	}
+	restarted := waterlevel.NewService(observationSource{next}, normal, func() time.Time { return now })
+	if got := restarted.Snapshot().Observation; got == nil || got.ValueCM != 20 {
+		t.Fatalf("replacement not visible after restart: %+v", got)
+	}
+}
+
+func TestInterruptedBeforeRenamePreservesPublishedAndDisk(t *testing.T) {
+	now := time.Date(2026, 11, 16, 18, 0, 0, 0, time.UTC)
+	dir := t.TempDir()
+	normal := Store{Dir: dir}
+	old := &waterlevel.Observation{ValueCM: 10, ObservedAt: now, FetchedAt: now}
+	next := &waterlevel.Observation{ValueCM: 20, ObservedAt: now, FetchedAt: now}
+	if err := normal.SaveObservation(old); err != nil {
+		t.Fatal(err)
+	}
+	broken := Store{Dir: dir, beforeRename: func(path string) error {
+		if err := os.WriteFile(path, []byte(`{"version":1`), 0600); err != nil {
+			return err
+		}
+		return errors.New("interrupted write")
+	}}
+	service := waterlevel.NewService(observationSource{next}, broken, func() time.Time { return now })
+	service.RefreshObservation(context.Background())
+	snapshot := service.Snapshot()
+	if snapshot.Observation.ValueCM != 10 || snapshot.ObservationAttempt.ErrorCode == nil || *snapshot.ObservationAttempt.ErrorCode != "cache_error" {
+		t.Fatalf("%+v", snapshot)
+	}
+	restarted, err := normal.LoadObservation()
+	if err != nil || restarted.ValueCM != 10 {
+		t.Fatalf("%+v %v", restarted, err)
+	}
+}
 
 func TestIndependentRestartAndCorruption(t *testing.T) {
 	dir := t.TempDir()

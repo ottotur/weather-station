@@ -13,7 +13,11 @@ import (
 	"weather-station/internal/waterlevel"
 )
 
-type Store struct{ Dir string }
+type Store struct {
+	Dir          string
+	syncDir      func(string) error
+	beforeRename func(string) error
+}
 
 type envelope[T any] struct {
 	Version int `json:"version"`
@@ -40,10 +44,26 @@ func (s Store) write(name string, value any) (err error) {
 	if err = f.Close(); err != nil {
 		return err
 	}
+	if s.beforeRename != nil {
+		if err = s.beforeRename(tmp); err != nil {
+			return err
+		}
+	}
 	if err = os.Rename(tmp, filepath.Join(s.Dir, name)); err != nil {
 		return err
 	}
-	dir, err := os.Open(s.Dir)
+	syncDir := s.syncDir
+	if syncDir == nil {
+		syncDir = syncDirectory
+	}
+	if err := syncDir(s.Dir); err != nil {
+		return fmt.Errorf("%w: %v", waterlevel.ErrDurabilityUncertain, err)
+	}
+	return nil
+}
+
+func syncDirectory(path string) error {
+	dir, err := os.Open(path)
 	if err != nil {
 		return err
 	}

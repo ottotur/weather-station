@@ -37,6 +37,20 @@ Vedenkorkeuden laskentamallissa havainnon tuoreus määräytyy mittausajasta
 varmennettu julkaisuaika, eikä uusi haku nuorenna vanhaa malliajoa. Ennusteen
 tuleva kattavuus tarkistetaan tuoreudesta erikseen.
 
+## Välimuisti ja tallennusvirheet
+
+Välimuistihakemistossa ovat erilliset `observation.json` ja `forecast.json`.
+Niiden JSON-kuoressa on `version: 1` ja `data`, joka sisältää normalisoidut
+arvot ja ajat; ennusteessa on lisäksi `unitStatus: assumed-cm`. Käynnistyksessä
+tiedostot tarkistetaan erikseen. Vioittunut tai tuntemattoman version tiedosto
+ei estä toisen aineiston käyttöä, ja väliaikaistiedostoja ei ladata.
+
+Ennen atomista korvausta tapahtuva virhe säilyttää aiemman tiedoston ja
+muistiaineiston. Jos korvaus onnistuu mutta hakemiston synkronointi epäonnistuu,
+API:n yritysvirhe on `cache_durability_uncertain`: muistissa on vanha aineisto,
+mutta uudelleenkäynnistyksessä voidaan lukea uusi tiedosto. Tarkista levyn tila
+ja oikeudet; myöhempi onnistunut haku tallentaa aineiston uudelleen.
+
 `npm audit` raportoi kehitysaikaisen Svelte Vite -liitännäisen `deepmerge`-
 riippuvuudesta matalan vakavuuden haavoittuvuuden GHSA-gcqx-w48m-w2h4.
 Tarkistushetkellä npm ei tarjonnut korjausta; riippuvuus ei ole selaimen

@@ -22,6 +22,9 @@
   const formatTime = (s: string) => date.format(new Date(s));
   const number = (n: number) => n.toLocaleString('fi-FI', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const status = (s: string) => ({ fresh: 'Tuore', stale: 'Vanhentunut', missing: 'Puuttuu' }[s] ?? s);
+  const attemptMessage = (attempt: Attempt) => attempt.errorCode === 'cache_durability_uncertain'
+    ? 'Tallennuksen pysyvyys on epävarma; aiempi tieto on käytössä.'
+    : 'Viimeisin haku epäonnistui';
 
   async function refresh() {
     if (pending) return;
@@ -79,7 +82,7 @@
   {#if data}
     <section>
       <h2>Viimeisin havainto</h2>
-      <p>{status(data.observation.status)}{#if data.observation.attempt.result === 'error'} · Viimeisin haku epäonnistui{/if}</p>
+      <p>{status(data.observation.status)}{#if data.observation.attempt.result === 'error'} · {attemptMessage(data.observation.attempt)}{/if}</p>
       {#if data.observation.data}
         <p class="value">{number(data.observation.data.valueCm)} cm</p>
         <p>Mitattu {formatTime(data.observation.data.observedAt)}</p>
@@ -87,7 +90,7 @@
     </section>
     <section>
       <h2>Ennuste seuraaville 48 tunnille</h2>
-      <p>{status(data.forecast.status)}{#if data.forecast.attempt.result === 'error'} · Viimeisin haku epäonnistui{/if}</p>
+      <p>{status(data.forecast.status)}{#if data.forecast.attempt.result === 'error'} · {attemptMessage(data.forecast.attempt)}{/if}</p>
       {#if data.forecast.data}<p>Mallin viiteaika {formatTime(data.forecast.data.analysisTime)}</p>{/if}
       {#if !data.forecast.hasFutureValues}<p>Voimassa olevaa ennustetta ei ole saatavilla.</p>{/if}
       {#if finite.length}
