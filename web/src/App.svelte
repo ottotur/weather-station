@@ -123,6 +123,8 @@
     </section>
   {/if}
   <footer><p>Lähde: Ilmatieteen laitos, avoin data, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+    <p><a href="https://opendata.fmi.fi/wfs?service=WFS&amp;version=2.0.0&amp;request=DescribeStoredQueries&amp;storedquery_id=fmi::observations::mareograph::instant::timevaluepair">Havaintokyselyn kuvaus</a> ·
+      <a href="https://opendata.fmi.fi/wfs?service=WFS&amp;version=2.0.0&amp;request=DescribeStoredQueries&amp;storedquery_id=fmi::forecast::sealevel::point::timevaluepair">Ennustekyselyn kuvaus</a></p>
     <p>Havainnon millimetrit muunnetaan senttimetreiksi. Ennusteen cm-yksikkö on käyttäjän hyväksymä oletus, ei suoraan varmennettu metatieto. Muutokset on laskettu ennusteesta.</p>
   </footer>
 </main>

@@ -82,6 +82,11 @@ test.describe('kosketus ja Suomen aika', () => {
     await page.getByText('Tuntitaulukko').click();
     await expect(page.getByText(/UTC\+3/).first()).toBeVisible();
     await expect(page.getByText(/UTC\+2/).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: 'CC BY 4.0' })).toBeVisible();
+    await expect(page.getByText(/käyttäjän hyväksymä oletus/)).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Havaintokyselyn kuvaus' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Ennustekyselyn kuvaus' })).toBeVisible();
+    await expect(page.getByText(/epävarmuusraj/)).toHaveCount(0);
     expect([...origins]).toEqual(['http://127.0.0.1:4173']);
   });
 });
