@@ -1,6 +1,6 @@
 # Tasks
 
-Tämä on tulevan toteutuksen tehtävälista, ei lupa aloittaa toteutusta. Taso A tarkoittaa kehityskoneella toimivaa kokonaisuutta; taso B oikealla Pi:llä ja mobiililaitteilla varmennettua käyttöä. Tekemättömät laitetestit jätetään avoimiksi.
+Taso A tarkoittaa kehityskoneella toimivaa kokonaisuutta; taso B oikealla Pi:llä ja mobiililaitteilla varmennettua käyttöä. Käyttäjän hyväksymänä rajauksena tekemättömät tason B laitetestit siirretään avoimeen [issueen #1](https://github.com/ottotur/weather-station/issues/1), eikä niitä merkitä suoritetuiksi.
 
 Päivitä `README.md`:tä ominaisuuksien valmistuessa, ei vasta lopuksi: pidä siinä projektin tarkoitus, nykyinen valmiusaste, nopea käynnistys ja linkit tarkempiin `docs/`-ohjeisiin. Päivitä kunkin tehtäväryhmän valmistuessa sen tarvitsemat ohjeet ja tarkista linkit sekä dokumentoidut komennot. OpenSpec säilyy vaatimusten ja suunnittelun paikkana.
 
@@ -51,15 +51,13 @@ Päivitä `README.md`:tä ominaisuuksien valmistuessa, ei vasta lopuksi: pidä s
 - [x] 8.3 Varmista rakennettu sovellus Windows 11:n selaimessa WSL:n localhost-osoitteesta. Kirjaa selain, WSL-versio, kosketusemulaation rajat ja näkyvät häiriötilat hyväksyntäraporttiin; dokumentoi mahdollinen localhost-välityksen este ilman automaattisia palomuuri-/verkkomuutoksia.
 - [x] 8.4 Tee kehityskonehyväksynnän dokumentaation kokonaisuustarkistus: varmista `README.md`:n valmiusaste, pikaohjeet ja linkit kehitys-, testaus- ja Pi-ajo-ohjeisiin. Suorita dokumentoidut kehityskoneen käynnistys- ja testikomennot; varmista, ettei ohje väitä Pi- tai mobiililaitehyväksyntää tehdyksi.
 
-## 9. Oikean laitteen hyväksyntä — taso B
+## 9. Manuaalisen laiteajon ohje
 
 - [x] 9.1 Laadi manuaalisen Pi-ajon ohje hyväksytylle Raspberry Pi OS Lite 64-bit / Debian 13 Trixie -kohteelle: version tiedostot, erillinen välimuisti, kuunteluosoite, käynnistys ja pysäytys. Varmista ohjeen tiedostopolut ja komennot; älä alusta tai asenna laitetta ilman erillistä lupaa.
-- [ ] 9.2 Kun Pi on valmis ja ajo sallittu, suorita sama versio oikealla `linux/arm64`-laitteella. Kirjaa arkkitehtuuri, käynnistys, rajatut live-haut tarkistettujen käyttöehtojen mukaisesti, internetkatko, välimuistin säilyminen ja uudelleenkäynnistys. Jätä tehtävä avoimeksi, jos laitetta ei voi testata.
-- [ ] 9.3 Testaa oikeiden mobiililaitteiden Safari-, Android Chrome- ja Firefox-käyttö soveltuvin laittein. Mittaa käyttökelpoisen yhteenvedon 2 s tavoite valmiilla välimuistilla ja 10 samanaikaisen asiakkaan käyttö; kirjaa laitteet, menetelmä, tulokset ja testaamattomat yhdistelmät. Älä korvaa puuttuvaa näyttöä WSL- tai emulaatiotuloksilla.
-- [ ] 9.4 Testaa oikealla iPadilla Safarissa pysty- ja vaaka-asento, asennon vaihto, kaavion kosketusvalinta, tuntitaulukko ja häiriömerkintöjen luettavuus. Kirjaa laitemalli, iPadOS-/selainversio ja tulokset hyväksyntäraporttiin sekä päivitä `README.md`:n testatun tuen tila. Jätä tehtävä avoimeksi, jos laitetta ei ole saatavilla; selainkoon emulaatio ei korvaa laitetestiä.
+Alkuperäiset tehtävät 9.2–9.4 (Pi-ajo, oikeiden mobiililaitteiden ja iPadin testit sekä suorituskykymittaukset) ovat **tekemättä ja siirretty** [issueen #1](https://github.com/ottotur/weather-station/issues/1). Ne eivät ole tämän muutoksen jäljellä olevia tehtäviä eivätkä siirron vuoksi laitehyväksyttyjä.
 
 ## Workflow follow-up
 
 - Esitä tasojen A ja B tila erikseen; älä väitä koko MVP:tä tai Pi-käyttöönottoa hyväksytyksi.
 - Pyydä erillinen hyväksyntä ennen yhdistämistä `main`iin. Arkistointicommit `b50b789` on eri haarassa eikä sisälly tähän muutokseen.
-- Arkistoi tämä muutos vasta toteutuksen ja vaadittujen tarkistusten valmistuttua tai käyttäjän hyväksyttyä avoimet poikkeamat nimenomaisesti.
+- Arkistoi tämä muutos vasta hyväksytyn kehityskonerajauksen toteutuksen ja vaadittujen tarkistusten valmistuttua. Laitehyväksyntä jää erikseen avoimeksi issueen #1 eikä arkistointi tarkoita sen suorittamista.

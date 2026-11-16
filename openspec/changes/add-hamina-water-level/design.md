@@ -20,7 +20,7 @@ Hyväksytty Pi-kohde on Raspberry Pi 3 Model B+ / Raspberry Pi OS Lite 64-bit / 
 
 - Ei yleiskäyttöistä säätietokehystä tai varautumista kaikkiin tuleviin aineistoihin.
 - Ei varsinaista Pi-asennusta, SD-kortin alustusta tai käyttöjärjestelmän ylläpitoa tämän suunnittelupyynnön perusteella.
-- Ei täyttä tuotannon julkaisu-/palautus-/systemd-ratkaisua. Pi:n hyväksyntäohje ja manuaalinen ajotesti kuuluvat tähän toimintoon, ylläpidon viimeistely myöhempään muutokseen.
+- Ei täyttä tuotannon julkaisu-/palautus-/systemd-ratkaisua. Pi:n manuaalisen ajon ohje kuuluu tähän muutokseen; varsinainen laitehyväksyntä siirretään [issueen #1](https://github.com/ottotur/weather-station/issues/1) ja ylläpidon viimeistely myöhempään muutokseen.
 
 ## Decisions
 
@@ -94,7 +94,7 @@ Ajat muotoillaan `Intl.DateTimeFormat`-toiminnolla kiinteästi `Europe/Helsinki`
 
 **B — Pi:llä varmennettu käyttöönotto:** kun laite on valmis ja käyttäjä sallii ajon, sama rakennettu versio ajetaan hyväksytyllä Trixie/arm64-kohteella. Tarkistetaan oikea arkkitehtuuri, käynnistys, haku, pysyvä välimuisti, internetkatko ja prosessin uudelleenkäynnistys. Testataan oikealla mobiililaitteella Safari sekä Android Chrome/Firefox käytettävissä olevilla laitteilla; testaamattomat yhdistelmät kirjataan avoimiksi.
 
-Mitataan käyttökelpoisen yhteenvedon 2 s tavoite valmiilla välimuistilla sekä 10 yhtäaikaisen asiakkaan käyttö, ja kirjataan laite, selain, verkko ja mittaustapa. WSL-tulokset eivät todista Pi:n suorituskykyä. Jos Pi ei ole saatavilla, taso A voidaan raportoida valmiiksi mutta taso B ja sitä vastaavat tehtävät jätetään avoimiksi. Koko muutosta ei väitetä laitehyväksytyksi.
+Mitataan käyttökelpoisen yhteenvedon 2 s tavoite valmiilla välimuistilla sekä 10 yhtäaikaisen asiakkaan käyttö, ja kirjataan laite, selain, verkko ja mittaustapa. WSL-tulokset eivät todista Pi:n suorituskykyä. Käyttäjän hyväksymänä rajauksena taso B ja sitä vastaavat tekemättömät tehtävät siirretään avoimeen [issueen #1](https://github.com/ottotur/weather-station/issues/1); taso A voidaan hyväksyä tässä muutoksessa. Siirto ei tarkoita laitetestien suorittamista tai laitehyväksyntää.
 
 ## Risks / Trade-offs
 
@@ -107,7 +107,7 @@ Mitataan käyttökelpoisen yhteenvedon 2 s tavoite valmiilla välimuistilla sek�
 
 ## Migration Plan
 
-Ei olemassa olevaa sovellusta tai käyttäjätietomigraatiota. Toteutus aloitetaan vain uudesta apply-pyynnöstä. Ensin toteutetaan ja testataan taso A; taso B suoritetaan myöhemmin käyttäjän sallimalla laitteella. Sovelluksen oletuskuuntelu on localhost; Pi:n lähiverkkokuuntelu asetetaan erikseen, ei internetiin avaamista.
+Ei olemassa olevaa sovellusta tai käyttäjätietomigraatiota. Toteutus aloitetaan vain uudesta apply-pyynnöstä. Tässä muutoksessa toteutetaan ja testataan taso A; taso B suoritetaan myöhemmin käyttäjän sallimalla laitteella [issuen #1](https://github.com/ottotur/weather-station/issues/1) mukaisesti. Sovelluksen oletuskuuntelu on localhost; Pi:n lähiverkkokuuntelu asetetaan erikseen, ei internetiin avaamista.
 
 Ensimmäistä manuaalista Pi-ajoa varten ohjeistetaan erillinen version hakemisto ja välimuistihakemisto. Testiversion voi pysäyttää koskematta asetuksiin tai aiempaan julkaisuun. Tämä ei korvaa myöhempää tuotannon julkaisu- ja palautusmenettelyä.
 

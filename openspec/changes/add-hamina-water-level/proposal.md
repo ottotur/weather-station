@@ -11,7 +11,7 @@ Haminan vedenkorkeushavainnon ja N2000-pääennusteen saatavuus on selvitetty. S
 - Näytetään viimeisin havainto, enintään seuraavien 48 tunnin todellinen ennuste, kaavio, tuntitaulukko sekä suurin nousu ja lasku ajankohtineen. Käyrää ei siirretä havaintotasolle.
 - Toteutetaan käyttäjän hyväksymät vanhentumisrajat: havainto 30 min mittaushetkestä, ennuste 12 h mallin viiteajasta. Vanhentunut tieto merkitään; muutossummat piilotetaan, jos jompikumpi aineisto on vanhentunut tai puuttuu.
 - Haetaan havainto 10 min ja ennuste 30 min välein myös virheiden jälkeen; viimeinen tarkistettu aineisto säilytetään. Hakuvirhe ja aineiston ikä esitetään erillisinä.
-- Mahdollistetaan paikallinen kehitys ja koko ketjun toistettavat testit Windows 11:n Ubuntu WSL:ssä sekä Windows-selaimessa. Pi-laitehyväksyntä raportoidaan erikseen eikä ristiinkäännöstä tulkita laiteajoksi.
+- Toteutetaan ja hyväksytään kehityskoneen kokonaisuus Windows 11:n Ubuntu WSL:ssä sekä Windows-selaimessa. Käyttäjän hyväksymänä rajauksena Pi- ja oikeiden mobiililaitteiden hyväksyntä siirretään myöhemmäksi seurattavaksi [issueen #1](https://github.com/ottotur/weather-station/issues/1); niitä ei ole suoritettu eikä ristiinkäännöstä tulkita laiteajoksi.
 
 ## Capabilities
 
@@ -28,6 +28,6 @@ Ei olemassa olevia pääspeksifikaatioita.
 
 Projektissa ei vielä ole sovelluskoodia tai rakennus-/testiasetuksia. Tuleva toteutus lisää Go-palvelimen, Svelte + TypeScript + Vite -käyttöliittymän ja niiden testaus- ja rakennusohjeet. Palvelin tarjoaa myös käyttöliittymän staattiset tiedostot; selain ei hae FMI:ltä eikä CDN:iltä.
 
-Hyväksytty tuotantokohde on Raspberry Pi 3 Model B+ / Raspberry Pi OS Lite 64-bit / Debian 13 Trixie ja Go `linux/arm64`. Pi:n toimintakunto ja laiteajo ovat testaamatta. Tämä muutos ei kata muita sääaineistoja, asemavalintaa, epävarmuusrajojen selvittämistä, ilmoituksia, täyttä systemd-/julkaisu-/ylläpitoratkaisua tai puhelimen offline-tallennusta.
+Hyväksytty tuotantokohde on Raspberry Pi 3 Model B+ / Raspberry Pi OS Lite 64-bit / Debian 13 Trixie ja Go `linux/arm64`. Pi:n toimintakunto, laiteajo ja oikeiden mobiililaitteiden testit ovat avoinna [issuessa #1](https://github.com/ottotur/weather-station/issues/1), tämän muutoksen hyväksyntärajauksen ulkopuolella. Tämä muutos ei kata muita sääaineistoja, asemavalintaa, epävarmuusrajojen selvittämistä, ilmoituksia, täyttä systemd-/julkaisu-/ylläpitoratkaisua tai puhelimen offline-tallennusta.
 
 Tämä ehdotus ei oikeuta toteutuksen aloittamista, Pi:n alustamista tai haarojen yhdistämistä `main`iin. Arkistointi on erillisessä haarassa `docs/archive-water-level-feasibility` (commit `b50b789`); tämä haara alkaa `main`ista eikä sisällä sitä.
