@@ -82,18 +82,20 @@
   {#if data}
     <section>
       <h2>Viimeisin havainto</h2>
-      <p>{status(data.observation.status)}{#if data.observation.attempt.result === 'error'} · {attemptMessage(data.observation.attempt)}{/if}</p>
+      <p>{disconnected ? 'Viimeksi saatu tieto; tuoreutta ei voi tarkistaa' : status(data.observation.status)}{#if data.observation.attempt.result === 'error'} · {attemptMessage(data.observation.attempt)}{/if}</p>
       {#if data.observation.data}
         <p class="value">{number(data.observation.data.valueCm)} cm</p>
         <p>Mitattu {formatTime(data.observation.data.observedAt)}</p>
+      {:else if data.observation.attempt.result === 'pending'}<p>Havaintoa haetaan…</p>
       {:else}<p>Havaintoa ei ole saatavilla.</p>{/if}
     </section>
     <section>
       <h2>Ennuste seuraaville 48 tunnille</h2>
-      <p>{status(data.forecast.status)}{#if data.forecast.attempt.result === 'error'} · {attemptMessage(data.forecast.attempt)}{/if}</p>
+      <p>{disconnected ? 'Viimeksi saatu tieto; tuoreutta ei voi tarkistaa' : status(data.forecast.status)}{#if data.forecast.attempt.result === 'error'} · {attemptMessage(data.forecast.attempt)}{/if}</p>
       {#if data.forecast.data}<p>Mallin viiteaika {formatTime(data.forecast.data.analysisTime)}</p>{/if}
       {#if data.forecast.lastShownAt}<p>Näytettävää ennustetta viimeistään {formatTime(data.forecast.lastShownAt)} asti.</p>{/if}
-      {#if !data.forecast.hasFutureValues}<p>Voimassa olevaa ennustetta ei ole saatavilla.</p>{/if}
+      {#if !data.forecast.data && data.forecast.attempt.result === 'pending'}<p>Ennustetta haetaan…</p>
+      {:else if !data.forecast.hasFutureValues}<p>Voimassa olevaa ennustetta ei ole saatavilla.</p>{/if}
       {#if finite.length}
         <svg viewBox="0 0 600 200" role="img" aria-label="Ennustetun vedenkorkeuden kaavio">
           {#each segments as segment}<polyline points={segment} fill="none" stroke="currentColor" stroke-width="2" />{/each}

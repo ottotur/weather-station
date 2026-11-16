@@ -21,3 +21,4 @@ go run ./cmd/weather-station
 Avaa `http://localhost:8080`. Oletusajo aloittaa oikeat FMI-haut. Ohjelman voi
 pysäyttää painamalla Ctrl+C. Kehitysympäristö, asetukset ja testausohje:
 [docs/development.md](docs/development.md).
+Näkymän tilojen selitys: [docs/user.md](docs/user.md).

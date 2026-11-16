@@ -57,10 +57,31 @@ test('paikallisen yhteyden katkos piilottaa yhteenvedon ja palautuu', async ({ p
   offline = true;
   await page.clock.fastForward('01:01');
   await expect(page.getByRole('alert')).toContainText('katkesi');
+  await expect(page.getByText('Tuore', { exact: true })).toHaveCount(0);
   await expect(page.getByText(/7,9 cm/)).toHaveCount(0);
   offline = false;
   await page.clock.fastForward('01:01');
   await expect(page.getByText(/7,9 cm/)).toBeVisible();
+});
+
+test('puuttuva aineisto ja sivulle paluu päivitetään', async ({ page }) => {
+  let count = 0;
+  await page.route('**/api/water-level/hamina', route => {
+    count++;
+    const pending = {
+      ...data,
+      observation: { status: 'missing', data: null, attempt: { result: 'pending', errorCode: null } },
+      forecast: { ...data.forecast, status: 'missing', data: null, points: [], hasFutureValues: false, lastShownAt: null, attempt: { result: 'pending', errorCode: null } },
+      summary: null
+    };
+    return route.fulfill({ json: count === 1 ? pending : data });
+  });
+  await page.goto('/');
+  await expect(page.getByText('Havaintoa haetaan…')).toBeVisible();
+  await expect(page.getByText('Ennustetta haetaan…')).toBeVisible();
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  await expect(page.getByText('32,1 cm', { exact: true })).toBeVisible();
+  expect(count).toBe(2);
 });
 
 test.describe('kosketus ja Suomen aika', () => {
@@ -101,4 +122,18 @@ test('vanhentunut aineisto ja tallennuksen epävarmuus näkyvät', async ({ page
   await expect(page.getByText(/Vanhentunut/)).toBeVisible();
   await expect(page.getByText(/Tallennuksen pysyvyys on epävarma/)).toBeVisible();
   await expect(page.getByText(/7,9 cm/)).toHaveCount(0);
+});
+
+test('ennusteen vanheneminen piilottaa yhteenvedon seuraavassa päivityksessä', async ({ page }) => {
+  let stale = false;
+  await page.clock.install();
+  await page.route('**/api/water-level/hamina', route => route.fulfill({
+    json: stale ? { ...data, forecast: { ...data.forecast, status: 'stale' }, summary: null, summaryReason: 'forecast_stale' } : data
+  }));
+  await page.goto('/');
+  await expect(page.getByText(/7,9 cm/)).toBeVisible();
+  stale = true;
+  await page.clock.fastForward('01:01');
+  await expect(page.getByText(/7,9 cm/)).toHaveCount(0);
+  await expect(page.getByText('Vanhentunut', { exact: true })).toBeVisible();
 });
