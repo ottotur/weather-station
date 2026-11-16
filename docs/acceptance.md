@@ -31,10 +31,17 @@ kokeessa. Live-FMI:tä, palomuurimuutoksia tai lähiverkkokuuntelua ei käytetty
 Headless-ajo ei tarkista manuaalisesti ulkoasua tai vuorovaikutusta eikä korvaa
 oikean laitteen kosketusta.
 
+## Käyttäjän Windows-selaintarkistus
+
+Käyttäjä ilmoitti 2026-11-16 testanneensa näkymää Windowsissa selaimella
+Brave 1.99.57 (64-bittinen, Chromium 157.0.8103.79): hänen mukaansa kaikki
+näytti toimivan. Raportissa ei yksilöity testattuja toimintoja, häiriötiloja
+tai kosketusemulaatiota, joten niitä ei tulkita erikseen hyväksytyiksi.
+
 ## Avoimet hyväksynnät
 
-- Windows 11:n selaimen manuaalinen näkymä-, vuorovaikutus- ja häiriötilojen
-  tarkistus on tekemättä. Headless-tulos yllä on rajattu automaattinäyttö.
+- Windows 11:n selaimen tarkemmat manuaaliset vuorovaikutus- ja häiriötilojen
+  tarkistukset sekä kosketusemulaation rajat ovat vielä erittelemättä.
 - Raspberry Pi:n käyttöjärjestelmää ei ole asennettu eikä laitetta ole ajettu
   tai testattu. Ristiinkäännös ei ole Pi-ajotesti.
 - Oikeiden puhelinten Safari-, Android Chrome- ja Firefox-testit sekä iPadin
