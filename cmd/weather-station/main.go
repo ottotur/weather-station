@@ -1,13 +1,16 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
-	fmt.Println("Keskeneräinen kehitysrunko: http://127.0.0.1:8080")
-	if err := http.ListenAndServe("127.0.0.1:8080", http.FileServer(http.Dir("web/dist"))); err != nil {
-		panic(err)
+	c, err := loadConfig(os.Getenv)
+	if err != nil {
+		log.Fatal(err)
 	}
+	log.Printf("Keskeneräinen kehitysrunko: http://%s", c.listen)
+	log.Fatal(http.ListenAndServe(c.listen, http.FileServer(http.Dir(c.staticDir))))
 }

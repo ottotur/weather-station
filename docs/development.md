@@ -14,6 +14,23 @@ komennolla `npm ls --depth=0` hakemistossa `web`.
 
 Tämä on vasta keskeneräinen runko, ei toimiva vedenkorkeussovellus.
 
+Rakennetun rungon voi käynnistää projektin juuresta:
+
+```sh
+cd web
+npm ci
+npm run build
+cd ..
+go run ./cmd/weather-station
+```
+
+Oletusosoite on `http://127.0.0.1:8080`. `WEATHER_LISTEN` vaihtaa
+kuunteluosoitteen, `WEATHER_STATIC_DIR` staattisen hakemiston ja
+`WEATHER_CACHE_DIR` välimuistihakemiston. `WEATHER_SOURCE_URL` on varattu
+FMI-lähteen osoitteelle testejä varten; lähdehakua ei ole vielä toteutettu.
+Kello annetaan laskentafunktioille erikseen, ja käynnistysasetukset sisältävät
+testattavan kellofunktion. Palvelin ei vielä käytä kumpaakaan hakuihin.
+
 Vedenkorkeuden laskentamallissa havainnon tuoreus määräytyy mittausajasta
 (30 minuuttia) ja ennusteen tuoreus `analysisTime`-mallin viiteajasta
 (12 tuntia). Täsmälleen rajalla aineisto on vielä tuore. Mallin viiteaika ei ole
