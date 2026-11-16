@@ -84,6 +84,9 @@ vielä puuttuvia koko ketjun selain- tai oikean laitteen testejä.
 Selaintestit: hakemistossa `web` ensin `npx playwright install chromium` ja
 sen jälkeen `npm test`. Chromiumin kosketusemulaatio ei ole oikean laitteen
 testi. Testatut selainikkunoiden leveydet ovat 360, 768 ja 1024 CSS-pikseliä.
+Testeissä vaihdetaan myös korkeutta pysty- ja vaakasuhteiden välillä ja
+tarkistetaan kaavion leveys, yhteenvetojen ja tuntitaulukon näkyminen sekä
+sivutason vaakavierityksen puuttuminen.
 Rakennetun käyttöliittymän Go-palvelintesti ajetaan projektin juuresta
 `WEATHER_TEST_WEB_DIST=../../web/dist go test -race ./cmd/weather-station`
 sen jälkeen, kun `npm run build` on tehty hakemistossa `web`. Polku tulkitaan

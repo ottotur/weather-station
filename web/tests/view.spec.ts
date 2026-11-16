@@ -42,7 +42,16 @@ for (const width of [360, 768, 1024]) {
     await page.keyboard.press('Enter');
     await expect(page.getByText(/40,0 cm/).last()).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.setViewportSize({ width: 1024, height: 600 });
+    const chart = await page.locator('svg').boundingBox();
+    expect(chart).not.toBeNull();
+    expect(chart!.width).toBeLessThanOrEqual(width);
+    await page.setViewportSize({ width, height: Math.round(width * 1.35) });
+    await expect(page.getByText(/7,9 cm/)).toBeVisible();
+    await expect(page.locator('table')).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.setViewportSize({ width: Math.max(width, 768), height: Math.round(width * 0.7) });
+    await expect(page.locator('table')).toBeVisible();
+    await expect(page.getByText(/7,9 cm/)).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 }
