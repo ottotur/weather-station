@@ -29,7 +29,7 @@ Päivitä `README.md`:tä ominaisuuksien valmistuessa, ei vasta lopuksi: pidä s
 
 ## 5. Haku ja ajastus
 
-- [ ] 5.1 Toteuta rajatut dokumentoidut FMI-kyselyt, aikakatkaisu ja vastauskokoraja. Varmista paikallisella HTTP-valepalvelimella kyselyparametrit, HTTP-/WFS-virheet ja ylikokoisen/hitaan vastauksen hallittu hylkäys; dokumentoi lähteet, käyttörajat ja CC BY 4.0.
+- [x] 5.1 Toteuta rajatut dokumentoidut FMI-kyselyt, aikakatkaisu ja vastauskokoraja. Varmista paikallisella HTTP-valepalvelimella kyselyparametrit, HTTP-/WFS-virheet ja ylikokoisen/hitaan vastauksen hallittu hylkäys; dokumentoi lähteet, käyttörajat ja CC BY 4.0.
 - [ ] 5.2 Yhdistä käynnistyshaku ja riippumattomat 10 min / 30 min ajastukset tarkistukseen ja pysyvään julkaisuun. Varmista testikellolla virheen jälkeinen normaali hakuväli, päällekkäisyyksien esto, vanhan snapshotin säilyminen sekä ettei asiakasmäärä muuta FMI-hakumäärää.
 
 ## 6. Paikallinen rajapinta

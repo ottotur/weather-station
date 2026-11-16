@@ -41,3 +41,19 @@ tuleva kattavuus tarkistetaan tuoreudesta erikseen.
 riippuvuudesta matalan vakavuuden haavoittuvuuden GHSA-gcqx-w48m-w2h4.
 Tarkistushetkellä npm ei tarjonnut korjausta; riippuvuus ei ole selaimen
 ajonaikainen riippuvuus.
+
+## FMI-lähde
+
+Hakulogiikka käyttää [FMI:n WFS-latauspalvelua](https://www.ilmatieteenlaitos.fi/latauspalvelun-pikaohje)
+ja yhden aseman dokumentoituja kyselyitä:
+[mareografihavainto](https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=DescribeStoredQueries&storedquery_id=fmi::observations::mareograph::instant::timevaluepair)
+ja [vedenkorkeusennuste](https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=DescribeStoredQueries&storedquery_id=fmi::forecast::sealevel::point::timevaluepair).
+Havainto rajataan viimeiseen tuntiin ja ennuste korkeintaan seuraavaan 48 tuntiin.
+Vastaus rajataan 2 MiB:iin ja HTTP-aikakatkaisu on 30 sekuntia.
+
+Lähde: Ilmatieteen laitos, avoin data, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+Havainnon millimetrit muunnetaan senttimetreiksi. `SeaLevelN2000`-ennusteen cm
+on käyttäjän hyväksymä oletus, ei suoraan varmennettu yksikkömetatieto.
+FMI:n selvityksessä tarkistetut käyttörajat ja niiden lähteet:
+[vedenkorkeusselvitys](feasibility/water-level.md#dokumentoidut-kyselyt-ja-käyttöehdot).
+Suunnitellut hakuvälit ovat 10 ja 30 minuuttia, mutta ajastusta ei vielä ole.
