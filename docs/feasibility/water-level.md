@@ -10,11 +10,13 @@ dokumentoidusta WFS-rajapinnasta. Näytteen ennustekattavuus ylittää 48 h.
 N2000-ennusteen yksikkö **cm** on käyttäjän hyväksymä oletus `SeaLevel`-kentän
 metatiedon perusteella, ei suoraan varmennettu kenttämetatieto.
 
-**Jatkosuunnittelu: estynyt alkuperäisten ehdottomien ehtojen mukaan**:
-käyttöjärjestelmä–Go-ehdotusta ei ole vielä hyväksytty lopullisesti, eikä
-N2000-kentän suoraa yksikkövarmennusta ole saatu. Käyttäjän hyväksymä
-yksikköpoikkeus on kirjattu §3:een; sitä ei tarvitse hyväksyttää uudelleen,
-mutta se on säilytettävä näkyvänä myöhemmässä suunnitelmassa.
+**Jatkosuunnittelu: mahdollista käyttäjän hyväksymällä yksikköpoikkeuksella.**
+Käyttäjä hyväksyi käyttöjärjestelmä–Go-yhdistelmän suunnittelukohteeksi
+2026-11-16. N2000-kentän suoraa yksikkövarmennusta ei ole saatu:
+alkuperäinen ehdoton varmennustavoite jää tältä osin täyttymättä.
+Käyttäjän hyväksymä yksikköpoikkeus on kirjattu §3:een; sitä ei tarvitse
+hyväksyttää uudelleen, mutta se on säilytettävä näkyvänä myöhemmässä
+suunnitelmassa. Pi:n toimintakunto ja laiteajo on edelleen testattava.
 Varmennettu tarkoittaa alla mainitusta lähteestä tarkistettua tietoa, ei laiteajon
 tai jatkuvan saatavuuden todistusta. Alustava tarkoittaa ehdotusta; avoin tarkoittaa
 vielä selvittämätöntä tietoa tai hyväksyntää.
@@ -39,10 +41,12 @@ Tämä on näkyvä ristiriita: tässä selvityksessä käytetään käyttäjän 
 Pi 3 Model B+:aa hyväksytyn muutossuunnitelman mukaisesti. Projektikuvausta ei
 muuteta tämän rajauksen sisällä.
 
-### Dokumentoitu käyttöjärjestelmä–Go-ehdotus
+### Hyväksytty käyttöjärjestelmä–Go-suunnittelukohde
 
-**Alustava ehdotus, tarkistettu 2026-11-16:** Raspberry Pi OS Lite (64-bit),
-Debian 13 Trixie, ilman työpöytää; Go **1.27.4** kehityskoneella.
+**Käyttäjän hyväksymä suunnittelukohde 2026-11-16:** Raspberry Pi OS Lite
+(64-bit), Debian 13 Trixie, ilman työpöytää; Go kehityskoneella.
+Selvityksessä tarkistettu Go-versio on **1.27.4**; toteutuksen alussa
+tarkistetaan ajantasainen tuettu korjausversio.
 Käännöskohde: `GOOS=linux GOARCH=arm64 GOARM64=v8.0 CGO_ENABLED=0`.
 `GOARM` koskee 32-bittistä `arm`-kohdetta, eikä sitä käytetä tässä.
 Ei lisätä `lse`- tai muita valinnaisia ARM-laajennuksia oletukseksi.
@@ -56,9 +60,12 @@ riippuvuuksien sopivuus on tarkistettava toteutuksessa.
 | OS/CPU-käännöskohde | [Go: Installing from source, environment](https://go.dev/doc/install/source#environment) listaa `linux/arm64`-yhdistelmän sekä `GOARM64`-asetuksen. [Go Minimum Requirements](https://go.dev/wiki/MinimumRequirements) määrittelee ARMv8.0-perustason ja oletuksen `GOARM64=v8.0`; Linuxille vähintään kernel 3.2 (Go 1.24 ja uudemmat). Ehdotetun OS:n kernel 6.18 ylittää tämän. [Go 1.27:n julkaisutiedot](https://go.dev/doc/go1.27) eivät ilmoita poistavansa tätä kohdetta. |
 
 Tämä on lähteisiin perustuva yhteensopivuuspäätelmä, ei tehty käännös, asennus,
-suorituskykymittaus tai laiteajotesti. Pi:n toimintakunto on avoin. Ehdotettu
-OS-versio ja Go:n lopullinen valinta odottavat käyttäjän hyväksyntää;
-käyttöjärjestelmän ehdottamiseen annettu lupa ei ole niiden hyväksyntä.
+suorituskykymittaus tai laiteajotesti. Pi:n toimintakunto on avoin.
+Hyväksynnän alkuperä on käyttäjän vastaus tämän muutoksen keskustelussa
+2026-11-16: ”hyväksyn teknologiayhdistelmän”, vastauksena suositukseen
+Raspberry Pi OS Lite 64-bitistä (Debian 13 Trixie) ja Go:sta kohteelle
+`linux/arm64`. Hyväksyntä koskee suunnittelukohdetta, ei todistettua
+toimivuutta, asennuksen aloittamista tai tämän muutoksen yhdistämistä.
 
 ## 2. Asema ja aineistot
 
@@ -354,11 +361,13 @@ manifestia sekä tallennettuja vastauksia vasten 2026-11-16.
 
 Arvioitu **2026-11-16** muutoksen `design.md`:n §4 ehtoja vasten.
 Dokumentaatioselvityksen valmistuminen ei tarkoita, että kaikki
-jatkosuunnitteluehdot olisi varmennettu tai teknologia lukittu.
+jatkosuunnitteluehdot olisi varmennettu. Teknologiayhdistelmä on nyt
+hyväksytty suunnittelukohteeksi; laiteajo jää myöhemmäksi ja yksikköpoikkeus
+säilyy käyttäjän hyväksymänä riskipäätöksenä.
 
 | Jatkosuunnitteluehto | Näyttö ja tila 2026-11-16 | Päätös tai jatkotarve |
 | --- | --- | --- |
-| Pi:n lähtötiedot ja tuettu ajokohde | Malli käyttäjän ilmoittama; mallin ARMv8-tuki, OS:n yhteensopivuus ja Go:n kohde dokumentoidusti tarkistettu (§1) | **Alustava:** Raspberry Pi OS Lite 64-bit / Debian 13 Trixie + Go 1.27.4 / `linux/arm64`, `GOARM64=v8.0`. Käyttäjän lopullinen hyväksyntä puuttuu. |
+| Pi:n lähtötiedot ja tuettu ajokohde | Malli käyttäjän ilmoittama; mallin ARMv8-tuki, OS:n yhteensopivuus ja Go:n kohde dokumentoidusti tarkistettu (§1) | **Käyttäjän hyväksymä suunnittelukohde 2026-11-16:** Raspberry Pi OS Lite 64-bit / Debian 13 Trixie + Go / `linux/arm64`, `GOARM64=v8.0`. Tarkistettu Go 1.27.4; ajantasainen tuettu korjausversio tarkistetaan toteutuksen alussa. Laiteajo tekemättä. |
 | Käyttäjän hyväksymä asema, havainto ja pääennuste | **Varmennettu:** käyttäjän valitsema Hamina Pitäjänsaari, FMISID 134254 ja geoid -10022823; aidot vastaukset (§2–3, manifesti) | Ei asemavaihdosta tai muuta datalähdettä. Yksi onnistunut vastaus ei takaa jatkuvaa saatavuutta. |
 | Yksiköt ja N2000 | Havainnon N2000 ja mm varmennettu, ennusteen N2000-parametri tunnistettu; suora yksikkömetatieto puuttuu | **Käyttäjän hyväksymä oletus:** ennuste cm kuten `SeaLevel`. Alkuperäinen suoran yksikkövarmennuksen tavoite ei täyty; tämä on sallittu riskipäätös, ei varmennettu lähdefakta. |
 | Aikojen merkitys ja ennustejakso | **Varmennettu näytteestä:** UTC, havaintohetki, ennusteen viite-/tulosaika, 113 h äärellinen jakso ja seitsemän puuttuvaa lopputuntia (§3) | Vanhentumisraja sekä ajastus määritellään myöhemmin. Julkaisuajaksi ei oleteta hakuaikaa. |
@@ -368,10 +377,11 @@ jatkosuunnitteluehdot olisi varmennettu tai teknologia lukittu.
 
 ### Käyttäjälle palautettavat päätökset ja seuraukset
 
-1. **Hyväksyttävä vielä:** yllä oleva käyttöjärjestelmä–Go-yhdistelmä tulevan
-   toteutuksen suunnittelukohteeksi, tai valittava muu erikseen selvitettävä
-   yhdistelmä. Käyttäjän aiempi lupa ehdottaa sopivaa käyttöjärjestelmää
-   ei ole automaattinen tietyn version tai Go:n hyväksyntä.
+1. **Hyväksytty 2026-11-16:** Raspberry Pi OS Lite 64-bit (Debian 13 Trixie)
+   ja Go kohteelle `linux/arm64` tulevan toteutuksen suunnittelukohteeksi.
+   Lähde on käyttäjän nimenomainen hyväksyntä tämän muutoksen keskustelussa
+   (§1), ei pelkkä aiempi lupa ehdottaa käyttöjärjestelmää. Oikean ohjelman
+   toimivuus ja suorituskyky Pi:llä varmennetaan myöhemmin.
 2. **Jo hyväksytty:** N2000-ennusteelle cm-oletus, jos suoraa vahvistusta
    ei löydy. Oletus ja sen lähdepuute seuraavat mahdolliseen myöhempään
    toteutussuunnitelmaan; niitä ei muuteta varmennetuksi yksikkötiedoksi.
