@@ -67,7 +67,19 @@ func FuturePoints(f *Forecast, now time.Time) []Point {
 		}
 	}
 	sort.Slice(result, func(i, j int) bool { return result[i].Time.Before(result[j].Time) })
-	return result
+	if len(result) < 2 {
+		return result
+	}
+	expanded := make([]Point, 0, len(result))
+	for i, p := range result {
+		if i > 0 {
+			for t := result[i-1].Time.Add(time.Hour); t.Before(p.Time); t = t.Add(time.Hour) {
+				expanded = append(expanded, Point{Time: t})
+			}
+		}
+		expanded = append(expanded, p)
+	}
+	return expanded
 }
 
 func HasFutureValues(f *Forecast, now time.Time) bool {

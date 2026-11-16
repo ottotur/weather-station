@@ -103,3 +103,20 @@ func TestSummaryRangeAndTie(t *testing.T) {
 		t.Fatal("missing tail is not an internal gap")
 	}
 }
+
+func TestAbsentHourIsGap(t *testing.T) {
+	now := time.Date(2026, 11, 16, 18, 0, 0, 0, time.UTC)
+	value := 40.0
+	f := &Forecast{AnalysisTime: now, Points: []Point{
+		{Time: now, ValueCM: &value},
+		{Time: now.Add(2 * time.Hour), ValueCM: &value},
+	}}
+	p := FuturePoints(f, now)
+	if len(p) != 3 || p[1].ValueCM != nil || !p[1].Time.Equal(now.Add(time.Hour)) {
+		t.Fatalf("missing hour: %+v", p)
+	}
+	s, _ := CalculateSummary(&Observation{ObservedAt: now, ValueCM: 32}, f, now)
+	if s == nil || !s.HasGaps {
+		t.Fatal("missing hour not reported")
+	}
+}
