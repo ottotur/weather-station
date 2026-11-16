@@ -81,6 +81,9 @@ Rajapinnan kentät ja esimerkit: [api.md](api.md).
 Projektin juuresta: `go test ./...`, `go test -race ./...` ja `go vet ./...`.
 Hakemistossa `web`: `npm run check` ja `npm run build`. Nämä eivät korvaa
 vielä puuttuvia koko ketjun selain- tai oikean laitteen testejä.
+Selaintestit: hakemistossa `web` ensin `npx playwright install chromium` ja
+sen jälkeen `npm test`. Chromiumin kosketusemulaatio ei ole oikean laitteen
+testi. Testatut selainikkunoiden leveydet ovat 360, 768 ja 1024 CSS-pikseliä.
 Rakennetun käyttöliittymän Go-palvelintesti ajetaan projektin juuresta
 `WEATHER_TEST_WEB_DIST=../../web/dist go test -race ./cmd/weather-station`
 sen jälkeen, kun `npm run build` on tehty hakemistossa `web`. Polku tulkitaan
