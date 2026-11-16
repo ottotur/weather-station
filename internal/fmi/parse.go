@@ -150,12 +150,18 @@ func selectSeries(root *element, property, station, stationCode string) (*elemen
 	return matches[0], nil
 }
 
-func points(series *element) ([]waterlevel.Point, error) {
+// rawPoint retains the source value without asserting its unit.
+type rawPoint struct {
+	Time  time.Time
+	Value *float64
+}
+
+func points(series *element) ([]rawPoint, error) {
 	nodes := series.all(wml, "MeasurementTVP")
 	if len(nodes) == 0 {
 		return nil, errors.New("no points")
 	}
-	var out []waterlevel.Point
+	var out []rawPoint
 	seen := map[time.Time]bool{}
 	valid := 0
 	for _, n := range nodes {
@@ -176,13 +182,13 @@ func points(series *element) ([]waterlevel.Point, error) {
 			return nil, err
 		}
 		text := strings.TrimSpace(vn.Text)
-		p := waterlevel.Point{Time: t}
+		p := rawPoint{Time: t}
 		if text != "" && text != "NaN" {
 			v, err := strconv.ParseFloat(text, 64)
 			if err != nil || math.IsNaN(v) || math.IsInf(v, 0) {
 				return nil, errors.New("invalid value")
 			}
-			p.ValueCM = &v
+			p.Value = &v
 			valid++
 		}
 		out = append(out, p)
@@ -223,6 +229,59 @@ func instant(root, node *element) (time.Time, error) {
 	return utc(strings.TrimSpace(pos.Text))
 }
 
+func validatePhenomenonTime(root, series *element) error {
+	node, err := one(series, om, "phenomenonTime")
+	if err != nil {
+		return err
+	}
+	if href := node.attr(xlink, "href"); href != "" {
+		if !strings.HasPrefix(href, "#") || len(href) == 1 {
+			return errors.New("external phenomenon time reference")
+		}
+		var targets []*element
+		for _, name := range []string{"TimePeriod", "TimeInstant"} {
+			for _, candidate := range root.all(gml, name) {
+				if candidate.attr(gml, "id") == href[1:] {
+					targets = append(targets, candidate)
+				}
+			}
+		}
+		if len(targets) != 1 {
+			return errors.New("unresolved phenomenon time reference")
+		}
+		node = targets[0]
+	}
+	periods := node.all(gml, "TimePeriod")
+	instants := node.all(gml, "TimeInstant")
+	if len(periods) == 1 && len(instants) == 0 {
+		begin, err := one(periods[0], gml, "beginPosition")
+		if err != nil {
+			return err
+		}
+		end, err := one(periods[0], gml, "endPosition")
+		if err != nil {
+			return err
+		}
+		startTime, err := utc(strings.TrimSpace(begin.Text))
+		if err != nil {
+			return err
+		}
+		endTime, err := utc(strings.TrimSpace(end.Text))
+		if err != nil {
+			return err
+		}
+		if endTime.Before(startTime) {
+			return errors.New("invalid phenomenon time period")
+		}
+		return nil
+	}
+	if len(periods) == 0 && len(instants) == 1 {
+		_, err := instant(root, instants[0])
+		return err
+	}
+	return errors.New("invalid phenomenon time")
+}
+
 // ParseObservation returns the latest finite observation, converted from mm to cm.
 func ParseObservation(data []byte, now time.Time) (*waterlevel.Observation, error) {
 	root, err := document(data)
@@ -233,6 +292,16 @@ func ParseObservation(data []byte, now time.Time) (*waterlevel.Observation, erro
 	if err != nil {
 		return nil, err
 	}
+	if err := validatePhenomenonTime(root, s); err != nil {
+		return nil, err
+	}
+	resultTime, err := one(s, om, "resultTime")
+	if err != nil {
+		return nil, err
+	}
+	if _, err := instant(root, resultTime); err != nil {
+		return nil, err
+	}
 	p, err := points(s)
 	if err != nil {
 		return nil, err
@@ -241,8 +310,8 @@ func ParseObservation(data []byte, now time.Time) (*waterlevel.Observation, erro
 		if p[i].Time.After(now) {
 			return nil, errors.New("future observation")
 		}
-		if p[i].ValueCM != nil {
-			return &waterlevel.Observation{ValueCM: *p[i].ValueCM / 10, ObservedAt: p[i].Time, FetchedAt: now}, nil
+		if p[i].Value != nil {
+			return &waterlevel.Observation{ValueCM: *p[i].Value / 10, ObservedAt: p[i].Time, FetchedAt: now}, nil
 		}
 	}
 	return nil, errors.New("no observation")
@@ -256,6 +325,9 @@ func ParseForecast(data []byte, now time.Time) (*waterlevel.Forecast, error) {
 	}
 	s, err := selectSeries(root, "SeaLevelN2000", "-10022823", "geoid")
 	if err != nil {
+		return nil, err
+	}
+	if err := validatePhenomenonTime(root, s); err != nil {
 		return nil, err
 	}
 	for _, namespace := range []string{wml, swe} {
@@ -297,5 +369,9 @@ func ParseForecast(data []byte, now time.Time) (*waterlevel.Forecast, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &waterlevel.Forecast{AnalysisTime: analysis, ResultTime: result, FetchedAt: now, UnitStatus: "assumed-cm", Points: p}, nil
+	normalized := make([]waterlevel.Point, len(p))
+	for i, point := range p {
+		normalized[i] = waterlevel.Point{Time: point.Time, ValueCM: point.Value}
+	}
+	return &waterlevel.Forecast{AnalysisTime: analysis, ResultTime: result, FetchedAt: now, UnitStatus: "assumed-cm", Points: normalized}, nil
 }

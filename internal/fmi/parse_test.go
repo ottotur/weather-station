@@ -92,3 +92,37 @@ func TestForecastSample(t *testing.T) {
 		t.Fatalf("internal gap: %v", err)
 	}
 }
+
+func TestUnresolvedPhenomenonTimeRejected(t *testing.T) {
+	now := time.Date(2026, 11, 16, 18, 8, 0, 0, time.UTC)
+	t.Run("forecast", func(t *testing.T) {
+		forecast := sample(t, "forecast")
+		bad := strings.Replace(forecast, `xlink:href="#time-interval-1-1"`, `xlink:href="#missing"`, 1)
+		if bad == forecast {
+			t.Fatal("fixture reference missing")
+		}
+		if _, err := ParseForecast([]byte(bad), now); err == nil {
+			t.Fatal("unresolved forecast phenomenonTime accepted")
+		}
+	})
+	t.Run("observation", func(t *testing.T) {
+		observation := sample(t, "observation")
+		bad := strings.Replace(observation, "<om:phenomenonTime>", `<om:phenomenonTime xlink:href="#missing">`, 1)
+		if bad == observation {
+			t.Fatal("fixture phenomenonTime missing")
+		}
+		if _, err := ParseObservation([]byte(bad), now); err == nil {
+			t.Fatal("unresolved observation phenomenonTime accepted")
+		}
+	})
+	t.Run("observation result time", func(t *testing.T) {
+		observation := sample(t, "observation")
+		bad := strings.Replace(observation, "<om:resultTime>", `<om:resultTime xlink:href="#missing">`, 1)
+		if bad == observation {
+			t.Fatal("fixture resultTime missing")
+		}
+		if _, err := ParseObservation([]byte(bad), now); err == nil {
+			t.Fatal("unresolved observation resultTime accepted")
+		}
+	})
+}
