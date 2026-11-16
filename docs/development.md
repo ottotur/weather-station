@@ -81,3 +81,7 @@ Rajapinnan kentät ja esimerkit: [api.md](api.md).
 Projektin juuresta: `go test ./...`, `go test -race ./...` ja `go vet ./...`.
 Hakemistossa `web`: `npm run check` ja `npm run build`. Nämä eivät korvaa
 vielä puuttuvia koko ketjun selain- tai oikean laitteen testejä.
+Rakennetun käyttöliittymän Go-palvelintesti ajetaan projektin juuresta
+`WEATHER_TEST_WEB_DIST=../../web/dist go test -race ./cmd/weather-station`
+sen jälkeen, kun `npm run build` on tehty hakemistossa `web`. Polku tulkitaan
+testipaketin `cmd/weather-station` työhakemistosta.

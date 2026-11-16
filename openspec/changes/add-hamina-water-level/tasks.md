@@ -35,7 +35,7 @@ Päivitä `README.md`:tä ominaisuuksien valmistuessa, ei vasta lopuksi: pidä s
 ## 6. Paikallinen rajapinta
 
 - [x] 6.1 Toteuta `GET /api/water-level/hamina`, palvelinkohtainen tuoreuslaskenta ja yhtenäinen snapshot. Varmista HTTP-testeillä täysi/osittainen/tyhjä vastaus, `null`-arvot, hakuyrityksen erottaminen tuoreudesta, syykoodit, lähdemerkintä ja `Cache-Control: no-store`; dokumentoi JSON-sopimus esimerkein.
-- [ ] 6.2 Lisää rakennettujen staattisten tiedostojen tarjoilu samasta alkuperästä ja varmista integraatiotestillä käyttöliittymän latautuminen ilman Vite-palvelinta. Testaa kymmenen yhtäaikaista API-asiakasta ilman lisähakuja tai ristiriitaisia vastauksia.
+- [x] 6.2 Lisää rakennettujen staattisten tiedostojen tarjoilu samasta alkuperästä ja varmista integraatiotestillä käyttöliittymän latautuminen ilman Vite-palvelinta. Testaa kymmenen yhtäaikaista API-asiakasta ilman lisähakuja tai ristiriitaisia vastauksia.
 
 ## 7. Mobiilinäkymä
 
