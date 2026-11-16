@@ -53,7 +53,7 @@ Päivitä `README.md`:tä ominaisuuksien valmistuessa, ei vasta lopuksi: pidä s
 
 ## 9. Oikean laitteen hyväksyntä — taso B
 
-- [ ] 9.1 Laadi manuaalisen Pi-ajon ohje hyväksytylle Raspberry Pi OS Lite 64-bit / Debian 13 Trixie -kohteelle: version tiedostot, erillinen välimuisti, kuunteluosoite, käynnistys ja pysäytys. Varmista ohjeen tiedostopolut ja komennot; älä alusta tai asenna laitetta ilman erillistä lupaa.
+- [x] 9.1 Laadi manuaalisen Pi-ajon ohje hyväksytylle Raspberry Pi OS Lite 64-bit / Debian 13 Trixie -kohteelle: version tiedostot, erillinen välimuisti, kuunteluosoite, käynnistys ja pysäytys. Varmista ohjeen tiedostopolut ja komennot; älä alusta tai asenna laitetta ilman erillistä lupaa.
 - [ ] 9.2 Kun Pi on valmis ja ajo sallittu, suorita sama versio oikealla `linux/arm64`-laitteella. Kirjaa arkkitehtuuri, käynnistys, rajatut live-haut tarkistettujen käyttöehtojen mukaisesti, internetkatko, välimuistin säilyminen ja uudelleenkäynnistys. Jätä tehtävä avoimeksi, jos laitetta ei voi testata.
 - [ ] 9.3 Testaa oikeiden mobiililaitteiden Safari-, Android Chrome- ja Firefox-käyttö soveltuvin laittein. Mittaa käyttökelpoisen yhteenvedon 2 s tavoite valmiilla välimuistilla ja 10 samanaikaisen asiakkaan käyttö; kirjaa laitteet, menetelmä, tulokset ja testaamattomat yhdistelmät. Älä korvaa puuttuvaa näyttöä WSL- tai emulaatiotuloksilla.
 - [ ] 9.4 Testaa oikealla iPadilla Safarissa pysty- ja vaaka-asento, asennon vaihto, kaavion kosketusvalinta, tuntitaulukko ja häiriömerkintöjen luettavuus. Kirjaa laitemalli, iPadOS-/selainversio ja tulokset hyväksyntäraporttiin sekä päivitä `README.md`:n testatun tuen tila. Jätä tehtävä avoimeksi, jos laitetta ei ole saatavilla; selainkoon emulaatio ei korvaa laitetestiä.
