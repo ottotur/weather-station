@@ -12,7 +12,7 @@ versiot ovat Svelte 5.57.3, Vite 8.3.8, Svelte Vite -liitännäinen 7.3.1,
 TypeScript 5.9.3, Node-tyypit 24.19.2 ja svelte-check 4.7.8; versiot voi tarkistaa
 komennolla `npm ls --depth=0` hakemistossa `web`.
 
-Tämä on vasta keskeneräinen runko, ei toimiva vedenkorkeussovellus.
+Sovellus on keskeneräinen eikä sen koko ketjua ole vielä hyväksyntätestattu.
 
 Rakennetun rungon voi käynnistää projektin juuresta:
 
@@ -71,3 +71,9 @@ on käyttäjän hyväksymä oletus, ei suoraan varmennettu yksikkömetatieto.
 FMI:n selvityksessä tarkistetut käyttörajat ja niiden lähteet:
 [vedenkorkeusselvitys](feasibility/water-level.md#dokumentoidut-kyselyt-ja-käyttöehdot).
 Hakuvälit ovat 10 ja 30 minuuttia. Toteutuksen koko ketjun testaus on kesken.
+
+## Nykyiset automaattiset tarkistukset
+
+Projektin juuresta: `go test ./...`, `go test -race ./...` ja `go vet ./...`.
+Hakemistossa `web`: `npm run check` ja `npm run build`. Nämä eivät korvaa
+vielä puuttuvia koko ketjun selain- tai oikean laitteen testejä.
