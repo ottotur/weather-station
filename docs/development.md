@@ -14,6 +14,12 @@ komennolla `npm ls --depth=0` hakemistossa `web`.
 
 Tämä on vasta keskeneräinen runko, ei toimiva vedenkorkeussovellus.
 
+Vedenkorkeuden laskentamallissa havainnon tuoreus määräytyy mittausajasta
+(30 minuuttia) ja ennusteen tuoreus `analysisTime`-mallin viiteajasta
+(12 tuntia). Täsmälleen rajalla aineisto on vielä tuore. Mallin viiteaika ei ole
+varmennettu julkaisuaika, eikä uusi haku nuorenna vanhaa malliajoa. Ennusteen
+tuleva kattavuus tarkistetaan tuoreudesta erikseen.
+
 `npm audit` raportoi kehitysaikaisen Svelte Vite -liitännäisen `deepmerge`-
 riippuvuudesta matalan vakavuuden haavoittuvuuden GHSA-gcqx-w48m-w2h4.
 Tarkistushetkellä npm ei tarjonnut korjausta; riippuvuus ei ole selaimen

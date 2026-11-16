@@ -19,8 +19,8 @@ Päivitä `README.md`:tä ominaisuuksien valmistuessa, ei vasta lopuksi: pidä s
 
 ## 3. Tuoreus ja muutoksen laskenta
 
-- [ ] 3.1 Toteuta kellosta riippuvat 30 min / 12 h -tilat sekä kattavuuden erottaminen tuoreudesta. Varmista testeillä rajan alitus, tasaraja, ylitys, sama malliajo uusintahaussa ja päättynyt ennustejakso; dokumentoi `analysisTime` mallin viiteajaksi, ei julkaisuajaksi.
-- [ ] 3.2 Toteuta näytetyn tulevan 48 h jakson nousu-/laskuyhteenveto viimeisimmästä havainnosta. Testaa molemmat muutossuunnat, vain nousu/lasku, nollamuutos, tasatulosten aikaisin hetki, aukkojen varoitus sekä laskelmien piilottaminen kummankin aineiston vanhentuessa erikseen.
+- [x] 3.1 Toteuta kellosta riippuvat 30 min / 12 h -tilat sekä kattavuuden erottaminen tuoreudesta. Varmista testeillä rajan alitus, tasaraja, ylitys, sama malliajo uusintahaussa ja päättynyt ennustejakso; dokumentoi `analysisTime` mallin viiteajaksi, ei julkaisuajaksi.
+- [x] 3.2 Toteuta näytetyn tulevan 48 h jakson nousu-/laskuyhteenveto viimeisimmästä havainnosta. Testaa molemmat muutossuunnat, vain nousu/lasku, nollamuutos, tasatulosten aikaisin hetki, aukkojen varoitus sekä laskelmien piilottaminen kummankin aineiston vanhentuessa erikseen.
 
 ## 4. Pysyvä välimuisti
 
