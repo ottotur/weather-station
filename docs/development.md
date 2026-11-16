@@ -40,8 +40,11 @@ tuleva kattavuus tarkistetaan tuoreudesta erikseen.
 ## Välimuisti ja tallennusvirheet
 
 Välimuistihakemistossa ovat erilliset `observation.json` ja `forecast.json`.
-Niiden JSON-kuoressa on `version: 1` ja `data`, joka sisältää normalisoidut
-arvot ja ajat; ennusteessa on lisäksi `unitStatus: assumed-cm`. Käynnistyksessä
+Niiden JSON-kuoressa on `version: 1`, lähde `FMI`, aseman tunniste ja suure
+sekä `data`, joka sisältää normalisoidut arvot ja ajat; ennusteessa on lisäksi
+`unitStatus: assumed-cm`. Kehityksen aiemman keskeneräisen version tiedostot,
+joista nämä lähdetiedot puuttuvat, hylätään latauksessa eikä niitä pidetä
+varmennettuna aineistona. Käynnistyksessä
 tiedostot tarkistetaan erikseen. Vioittunut tai tuntemattoman version tiedosto
 ei estä toisen aineiston käyttöä, ja väliaikaistiedostoja ei ladata.
 

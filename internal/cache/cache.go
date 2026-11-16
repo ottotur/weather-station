@@ -20,8 +20,11 @@ type Store struct {
 }
 
 type envelope[T any] struct {
-	Version int `json:"version"`
-	Data    T   `json:"data"`
+	Version   int    `json:"version"`
+	Source    string `json:"source"`
+	Station   string `json:"station"`
+	Parameter string `json:"parameter"`
+	Data      T      `json:"data"`
 }
 
 func (s Store) write(name string, value any) (err error) {
@@ -71,7 +74,7 @@ func syncDirectory(path string) error {
 	return dir.Sync()
 }
 
-func read[T any](s Store, name string) (T, error) {
+func read[T any](s Store, name, station, parameter string) (T, error) {
 	var zero T
 	b, err := os.ReadFile(filepath.Join(s.Dir, name))
 	if err != nil {
@@ -83,6 +86,9 @@ func read[T any](s Store, name string) (T, error) {
 	}
 	if e.Version != 1 {
 		return zero, errors.New("unsupported cache version")
+	}
+	if e.Source != "FMI" || e.Station != station || e.Parameter != parameter {
+		return zero, errors.New("invalid cache source metadata")
 	}
 	return e.Data, nil
 }
@@ -121,16 +127,16 @@ func (s Store) SaveObservation(o *waterlevel.Observation) error {
 	if err := validObservation(o); err != nil {
 		return err
 	}
-	return s.write("observation.json", envelope[*waterlevel.Observation]{Version: 1, Data: o})
+	return s.write("observation.json", envelope[*waterlevel.Observation]{Version: 1, Source: "FMI", Station: "134254", Parameter: "WLEVN2K_PT1S_INSTANT", Data: o})
 }
 func (s Store) SaveForecast(f *waterlevel.Forecast) error {
 	if err := validForecast(f); err != nil {
 		return err
 	}
-	return s.write("forecast.json", envelope[*waterlevel.Forecast]{Version: 1, Data: f})
+	return s.write("forecast.json", envelope[*waterlevel.Forecast]{Version: 1, Source: "FMI", Station: "-10022823", Parameter: "SeaLevelN2000", Data: f})
 }
 func (s Store) LoadObservation() (*waterlevel.Observation, error) {
-	o, err := read[*waterlevel.Observation](s, "observation.json")
+	o, err := read[*waterlevel.Observation](s, "observation.json", "134254", "WLEVN2K_PT1S_INSTANT")
 	if err != nil {
 		return nil, fmt.Errorf("observation cache: %w", err)
 	}
@@ -140,7 +146,7 @@ func (s Store) LoadObservation() (*waterlevel.Observation, error) {
 	return o, nil
 }
 func (s Store) LoadForecast() (*waterlevel.Forecast, error) {
-	f, err := read[*waterlevel.Forecast](s, "forecast.json")
+	f, err := read[*waterlevel.Forecast](s, "forecast.json", "-10022823", "SeaLevelN2000")
 	if err != nil {
 		return nil, fmt.Errorf("forecast cache: %w", err)
 	}

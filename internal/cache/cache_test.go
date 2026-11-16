@@ -2,6 +2,7 @@ package cache
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"os"
 	"path/filepath"
@@ -90,9 +91,38 @@ func TestIndependentRestartAndCorruption(t *testing.T) {
 	if err := s.SaveForecast(f); err != nil {
 		t.Fatal(err)
 	}
+	loadedObservation, err := (Store{Dir: dir}).LoadObservation()
+	if err != nil || !loadedObservation.ObservedAt.Equal(o.ObservedAt) || !loadedObservation.FetchedAt.Equal(o.FetchedAt) {
+		t.Fatalf("%+v %v", loadedObservation, err)
+	}
 	got, err := (Store{Dir: dir}).LoadForecast()
-	if err != nil || got.UnitStatus != "assumed-cm" || !got.AnalysisTime.Equal(f.AnalysisTime) || got.Points[1].ValueCM != nil {
+	if err != nil || got.UnitStatus != "assumed-cm" || !got.AnalysisTime.Equal(f.AnalysisTime) || !got.ResultTime.Equal(f.ResultTime) || !got.FetchedAt.Equal(f.FetchedAt) || got.Points[1].ValueCM != nil {
 		t.Fatalf("%+v %v", got, err)
+	}
+	b, err := os.ReadFile(filepath.Join(dir, "forecast.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var stored map[string]any
+	if err := json.Unmarshal(b, &stored); err != nil {
+		t.Fatal(err)
+	}
+	if stored["source"] != "FMI" || stored["station"] != "-10022823" || stored["parameter"] != "SeaLevelN2000" {
+		t.Fatalf("source metadata: %v", stored)
+	}
+	stored["parameter"] = "SeaLevel"
+	b, err = json.Marshal(stored)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "forecast.json"), b, 0600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.LoadForecast(); err == nil {
+		t.Fatal("incorrect parameter accepted")
+	}
+	if err := s.SaveForecast(f); err != nil {
+		t.Fatal(err)
 	}
 	if err := os.WriteFile(filepath.Join(dir, ".forecast.json-interrupted.tmp"), []byte("{"), 0600); err != nil {
 		t.Fatal(err)
