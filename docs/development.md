@@ -49,6 +49,9 @@ joista nämä lähdetiedot puuttuvat, hylätään latauksessa eikä niitä pidet
 varmennettuna aineistona. Käynnistyksessä
 tiedostot tarkistetaan erikseen. Vioittunut tai tuntemattoman version tiedosto
 ei estä toisen aineiston käyttöä, ja väliaikaistiedostoja ei ladata.
+Vanha havaintotiedosto, jossa on vaaditut lähdetiedot mutta ei tulosaikaa,
+voidaan edelleen ladata: sen `resultTime` on API:ssa `null`, kunnes uusi
+tarkistettu havainto tallennetaan. Tulosaikaa ei päätellä muista ajoista.
 
 Ennen atomista korvausta tapahtuva virhe säilyttää aiemman tiedoston ja
 muistiaineiston. Jos korvaus onnistuu mutta hakemiston synkronointi epäonnistuu,

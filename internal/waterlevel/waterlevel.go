@@ -8,9 +8,10 @@ import (
 )
 
 type Observation struct {
-	ValueCM    float64   `json:"valueCm"`
-	ObservedAt time.Time `json:"observedAt"`
-	FetchedAt  time.Time `json:"fetchedAt"`
+	ValueCM    float64    `json:"valueCm"`
+	ObservedAt time.Time  `json:"observedAt"`
+	ResultTime *time.Time `json:"resultTime"`
+	FetchedAt  time.Time  `json:"fetchedAt"`
 }
 
 type Point struct {

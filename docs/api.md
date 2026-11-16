@@ -15,7 +15,10 @@ Esimerkki tyhjästä havainnosta:
 
 Vastauksen juuritasolla ovat `schemaVersion`, `serverTime`, `station`, `unit`,
 `datum`, `observation`, `forecast`, `summary`, `summaryReason` ja `source`.
-Havainnon `data` sisältää `valueCm`, `observedAt` ja `fetchedAt`. Ennusteen
+Havainnon `data` sisältää `valueCm`, `observedAt`, `resultTime` ja `fetchedAt`.
+Vanhoista välimuistitiedostoista, joihin tulosaikaa ei tallennettu, luetun
+havainnon `resultTime` on `null`: sitä ei päätellä mittaus- tai hakuajasta.
+Ennusteen
 `data` sisältää `analysisTime`, `resultTime`, `fetchedAt`, `unitStatus` ja
 viimeisen äärellisen arvon ajan `lastValidAt`. `analysisTime` on mallin
 viiteaika, ei varmennettu julkaisuaika; `unitStatus: assumed-cm` on käyttäjän
@@ -31,7 +34,7 @@ Esimerkiksi tuore havainto voi säilyä käytössä hakuvirheestä huolimatta:
 ```json
 {
   "status": "fresh",
-  "data": {"valueCm": 32.1, "observedAt": "2026-11-16T18:00:00Z", "fetchedAt": "2026-11-16T18:01:00Z"},
+  "data": {"valueCm": 32.1, "observedAt": "2026-11-16T18:00:00Z", "resultTime": "2026-11-16T18:00:00Z", "fetchedAt": "2026-11-16T18:01:00Z"},
   "attempt": {"lastAttemptAt": "2026-11-16T18:10:00Z", "result": "error", "errorCode": "source_error"}
 }
 ```

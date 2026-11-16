@@ -6,13 +6,53 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
 
+	"weather-station/internal/cache"
+	"weather-station/internal/fmi"
 	"weather-station/internal/waterlevel"
 )
+
+func TestObservationResultTimeSurvivesRestart(t *testing.T) {
+	now := time.Date(2026, 11, 16, 18, 8, 0, 0, time.UTC)
+	fixture, err := os.ReadFile("../../docs/feasibility/evidence/hamina-observation.xml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	xml := strings.Replace(string(fixture), "2026-11-16T18:00:00Z</gml:timePosition>", "2026-11-16T17:59:30Z</gml:timePosition>", 1)
+	if xml == string(fixture) {
+		t.Fatal("fixture result time not found")
+	}
+	source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte(xml)) }))
+	defer source.Close()
+	store := cache.Store{Dir: t.TempDir()}
+	clock := func() time.Time { return now }
+	service := waterlevel.NewService(fmi.NewClient(source.URL), store, clock)
+	service.RefreshObservation(context.Background())
+	check := func(s *waterlevel.Service) {
+		t.Helper()
+		res := httptest.NewRecorder()
+		(API{Service: s, Now: clock}).ServeHTTP(res, httptest.NewRequest(http.MethodGet, "/", nil))
+		var doc map[string]any
+		if err := json.Unmarshal(res.Body.Bytes(), &doc); err != nil {
+			t.Fatal(err)
+		}
+		obs, ok := doc["observation"].(map[string]any)["data"].(map[string]any)
+		if !ok {
+			t.Fatalf("missing observation: %s", res.Body.String())
+		}
+		if obs["resultTime"] != "2026-11-16T17:59:30Z" || obs["observedAt"] != "2026-11-16T18:00:00Z" || obs["fetchedAt"] != "2026-11-16T18:08:00Z" {
+			t.Fatalf("source times not preserved separately: %v", obs)
+		}
+	}
+	check(service)
+	check(waterlevel.NewService(fmi.NewClient(source.URL), store, clock))
+}
 
 type empty struct{}
 
@@ -152,6 +192,10 @@ func TestPartialResponseSeparatesFreshnessAndAttempt(t *testing.T) {
 	observation := data["observation"].(map[string]any)
 	if observation["status"] != "fresh" || observation["attempt"].(map[string]any)["errorCode"] != "source_error" {
 		t.Fatalf("%v", observation)
+	}
+	obsData := observation["data"].(map[string]any)
+	if value, present := obsData["resultTime"]; !present || value != nil {
+		t.Fatalf("unknown legacy result time must be null: %v", obsData)
 	}
 	if data["forecast"].(map[string]any)["data"] != nil || data["summary"] != nil || data["summaryReason"] != "forecast_missing" {
 		t.Fatalf("%v", data)

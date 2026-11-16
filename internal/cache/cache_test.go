@@ -219,3 +219,32 @@ func TestZeroObservationIsValid(t *testing.T) {
 		t.Fatalf("valid zero rejected: %+v %v", got, err)
 	}
 }
+
+func TestLegacyObservationHasUnknownResultTime(t *testing.T) {
+	now := time.Date(2026, 11, 16, 18, 0, 0, 0, time.UTC)
+	store := Store{Dir: t.TempDir()}
+	if err := store.SaveObservation(&waterlevel.Observation{ValueCM: 32.1, ObservedAt: now, FetchedAt: now}); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(store.Dir, "observation.json")
+	b, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var doc map[string]any
+	if err := json.Unmarshal(b, &doc); err != nil {
+		t.Fatal(err)
+	}
+	delete(doc["data"].(map[string]any), "resultTime")
+	b, err = json.Marshal(doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, b, 0600); err != nil {
+		t.Fatal(err)
+	}
+	got, err := store.LoadObservation()
+	if err != nil || got.ResultTime != nil || got.ValueCM != 32.1 {
+		t.Fatalf("legacy cache: %+v %v", got, err)
+	}
+}

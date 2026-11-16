@@ -299,7 +299,8 @@ func ParseObservation(data []byte, now time.Time) (*waterlevel.Observation, erro
 	if err != nil {
 		return nil, err
 	}
-	if _, err := instant(root, resultTime); err != nil {
+	result, err := instant(root, resultTime)
+	if err != nil {
 		return nil, err
 	}
 	p, err := points(s)
@@ -311,7 +312,7 @@ func ParseObservation(data []byte, now time.Time) (*waterlevel.Observation, erro
 			return nil, errors.New("future observation")
 		}
 		if p[i].Value != nil {
-			return &waterlevel.Observation{ValueCM: *p[i].Value / 10, ObservedAt: p[i].Time, FetchedAt: now}, nil
+			return &waterlevel.Observation{ValueCM: *p[i].Value / 10, ObservedAt: p[i].Time, ResultTime: &result, FetchedAt: now}, nil
 		}
 	}
 	return nil, errors.New("no observation")

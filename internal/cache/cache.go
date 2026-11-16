@@ -94,7 +94,7 @@ func read[T any](s Store, name, station, parameter string) (T, error) {
 }
 
 func validObservation(o *waterlevel.Observation) error {
-	if o == nil || o.ObservedAt.IsZero() || o.FetchedAt.IsZero() || o.ObservedAt.After(o.FetchedAt) || math.IsNaN(o.ValueCM) || math.IsInf(o.ValueCM, 0) {
+	if o == nil || o.ObservedAt.IsZero() || o.FetchedAt.IsZero() || o.ObservedAt.After(o.FetchedAt) || (o.ResultTime != nil && o.ResultTime.IsZero()) || math.IsNaN(o.ValueCM) || math.IsInf(o.ValueCM, 0) {
 		return errors.New("invalid cached observation")
 	}
 	return nil
@@ -137,9 +137,10 @@ func (s Store) SaveForecast(f *waterlevel.Forecast) error {
 }
 func (s Store) LoadObservation() (*waterlevel.Observation, error) {
 	type storedObservation struct {
-		ValueCM    *float64  `json:"valueCm"`
-		ObservedAt time.Time `json:"observedAt"`
-		FetchedAt  time.Time `json:"fetchedAt"`
+		ValueCM    *float64   `json:"valueCm"`
+		ObservedAt time.Time  `json:"observedAt"`
+		ResultTime *time.Time `json:"resultTime"`
+		FetchedAt  time.Time  `json:"fetchedAt"`
 	}
 	stored, err := read[*storedObservation](s, "observation.json", "134254", "WLEVN2K_PT1S_INSTANT")
 	if err != nil {
@@ -148,7 +149,7 @@ func (s Store) LoadObservation() (*waterlevel.Observation, error) {
 	if stored == nil || stored.ValueCM == nil {
 		return nil, errors.New("missing cached observation value")
 	}
-	o := &waterlevel.Observation{ValueCM: *stored.ValueCM, ObservedAt: stored.ObservedAt, FetchedAt: stored.FetchedAt}
+	o := &waterlevel.Observation{ValueCM: *stored.ValueCM, ObservedAt: stored.ObservedAt, ResultTime: stored.ResultTime, FetchedAt: stored.FetchedAt}
 	if err = validObservation(o); err != nil {
 		return nil, err
 	}

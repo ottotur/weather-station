@@ -77,6 +77,10 @@ func (s *Service) Snapshot() Snapshot {
 	result := s.state
 	if result.Observation != nil {
 		o := *result.Observation
+		if o.ResultTime != nil {
+			resultTime := *o.ResultTime
+			o.ResultTime = &resultTime
+		}
 		result.Observation = &o
 	}
 	if result.Forecast != nil {
@@ -94,43 +98,44 @@ func (s *Service) Snapshot() Snapshot {
 }
 
 func (s *Service) RefreshObservation(ctx context.Context) {
-	if !s.observationMu.TryLock() {
-		return
-	}
-	defer s.observationMu.Unlock()
-	now := s.now().UTC()
-	o, sourceErr := s.source.Observation(ctx, now)
-	var cacheErr error
-	if sourceErr == nil {
-		cacheErr = s.store.SaveObservation(o)
-	}
-	attempt := newAttempt(now, sourceErr, cacheErr)
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.state.ObservationAttempt = attempt
-	if sourceErr == nil && cacheErr == nil {
-		s.state.Observation = o
-	}
+	refresh(ctx, s, &s.observationMu, s.source.Observation, s.store.SaveObservation,
+		func(state *Snapshot, value *Observation, attempt Attempt) {
+			state.ObservationAttempt = attempt
+			if attempt.Result == "success" {
+				state.Observation = value
+			}
+		})
 }
 
 func (s *Service) RefreshForecast(ctx context.Context) {
-	if !s.forecastMu.TryLock() {
+	refresh(ctx, s, &s.forecastMu, s.source.Forecast, s.store.SaveForecast,
+		func(state *Snapshot, value *Forecast, attempt Attempt) {
+			state.ForecastAttempt = attempt
+			if attempt.Result == "success" {
+				state.Forecast = value
+			}
+		})
+}
+
+func refresh[T any](ctx context.Context, s *Service, lock *sync.Mutex,
+	fetch func(context.Context, time.Time) (*T, error),
+	save func(*T) error,
+	publish func(*Snapshot, *T, Attempt),
+) {
+	if !lock.TryLock() {
 		return
 	}
-	defer s.forecastMu.Unlock()
+	defer lock.Unlock()
 	now := s.now().UTC()
-	f, sourceErr := s.source.Forecast(ctx, now)
+	value, sourceErr := fetch(ctx, now)
 	var cacheErr error
 	if sourceErr == nil {
-		cacheErr = s.store.SaveForecast(f)
+		cacheErr = save(value)
 	}
 	attempt := newAttempt(now, sourceErr, cacheErr)
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.state.ForecastAttempt = attempt
-	if sourceErr == nil && cacheErr == nil {
-		s.state.Forecast = f
-	}
+	publish(&s.state, value, attempt)
 }
 
 func (s *Service) Run(ctx context.Context) {

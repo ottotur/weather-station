@@ -69,6 +69,62 @@ type fakeStore struct {
 	fail bool
 }
 
+type forecastSource struct {
+	forecast *Forecast
+	err      error
+}
+
+func (s *forecastSource) Observation(context.Context, time.Time) (*Observation, error) {
+	return nil, errors.New("not used")
+}
+func (s *forecastSource) Forecast(context.Context, time.Time) (*Forecast, error) {
+	return s.forecast, s.err
+}
+
+type forecastStore struct {
+	observation *Observation
+	forecast    *Forecast
+	err         error
+}
+
+func (s *forecastStore) LoadObservation() (*Observation, error) { return s.observation, nil }
+func (s *forecastStore) LoadForecast() (*Forecast, error)       { return s.forecast, nil }
+func (s *forecastStore) SaveObservation(*Observation) error     { return nil }
+func (s *forecastStore) SaveForecast(f *Forecast) error {
+	if s.err != nil {
+		return s.err
+	}
+	s.forecast = f
+	return nil
+}
+
+func TestForecastRefreshPreservesIndependentSnapshot(t *testing.T) {
+	now := time.Date(2026, 11, 17, 0, 0, 0, 0, time.UTC)
+	old := &Forecast{AnalysisTime: now.Add(-time.Hour)}
+	next := &Forecast{AnalysisTime: now}
+	observation := &Observation{ValueCM: 32.1}
+	source := &forecastSource{forecast: next}
+	store := &forecastStore{observation: observation, forecast: old, err: ErrDurabilityUncertain}
+	s := NewService(source, store, func() time.Time { return now })
+	s.RefreshForecast(context.Background())
+	got := s.Snapshot()
+	if got.Forecast.AnalysisTime != old.AnalysisTime || got.Observation.ValueCM != 32.1 || got.ForecastAttempt.ErrorCode == nil || *got.ForecastAttempt.ErrorCode != "cache_durability_uncertain" {
+		t.Fatalf("unexpected failed state: %+v", got)
+	}
+	store.err = nil
+	s.RefreshForecast(context.Background())
+	got = s.Snapshot()
+	if got.Forecast.AnalysisTime != now || got.ForecastAttempt.Result != "success" || got.Observation.ValueCM != 32.1 {
+		t.Fatalf("unexpected success state: %+v", got)
+	}
+	source.err = errors.New("source")
+	s.RefreshForecast(context.Background())
+	got = s.Snapshot()
+	if got.Forecast.AnalysisTime != now || got.ForecastAttempt.ErrorCode == nil || *got.ForecastAttempt.ErrorCode != "source_error" {
+		t.Fatalf("unexpected source error state: %+v", got)
+	}
+}
+
 func (s *fakeStore) LoadObservation() (*Observation, error) { return s.obs, nil }
 func (s *fakeStore) LoadForecast() (*Forecast, error)       { return nil, errors.New("missing") }
 func (s *fakeStore) SaveObservation(o *Observation) error {
@@ -83,7 +139,8 @@ func (s *fakeStore) SaveForecast(*Forecast) error { return nil }
 func TestServiceRetainsPublishedData(t *testing.T) {
 	now := time.Now().UTC()
 	old := &Observation{ValueCM: 1, ObservedAt: now, FetchedAt: now}
-	next := &Observation{ValueCM: 2, ObservedAt: now, FetchedAt: now}
+	resultTime := now.Add(-time.Minute)
+	next := &Observation{ValueCM: 2, ObservedAt: now, ResultTime: &resultTime, FetchedAt: now}
 	source := &fakeSource{obs: next}
 	store := &fakeStore{obs: old, fail: true}
 	s := NewService(source, store, func() time.Time { return now })
@@ -99,7 +156,9 @@ func TestServiceRetainsPublishedData(t *testing.T) {
 		t.Fatalf("%+v", got)
 	}
 	got.Observation.ValueCM = 99
-	if s.Snapshot().Observation.ValueCM != 2 {
+	*got.Observation.ResultTime = now
+	stored := s.Snapshot().Observation
+	if stored.ValueCM != 2 || !stored.ResultTime.Equal(resultTime) {
 		t.Fatal("snapshot mutable")
 	}
 	source.fail = true
@@ -118,6 +177,10 @@ func TestRefreshDoesNotOverlap(t *testing.T) {
 	go func() { s.RefreshObservation(context.Background()); close(done) }()
 	<-source.started
 	s.RefreshObservation(context.Background())
+	s.RefreshForecast(context.Background())
+	if got := s.Snapshot().ForecastAttempt; got.Result != "error" || got.ErrorCode == nil || *got.ErrorCode != "source_error" {
+		t.Fatalf("forecast did not proceed independently: %+v", got)
+	}
 	close(source.release)
 	<-done
 	if source.calls != 1 {
