@@ -16,7 +16,7 @@ Haastattelun yksittäiset päätökset on vahvistettu keskustelussa. Viimeiseen 
 
 Sovellus kokoaa Ilmatieteen laitoksen (FMI) sää- ja meridatan helposti hahmotettavaksi verkkokäyttöliittymäksi mökin lähiverkkoon. Ensisijaisia käyttölaitteita ovat käyttäjien omat älypuhelimet ja tabletit.
 
-Sovelluksen palvelin toimii kokonaan projektille varatulla Raspberry Pi 2 Model B:llä. Mökillä on normaalisti jatkuva internetyhteys.
+Sovelluksen palvelin toimii kokonaan projektille varatulla Raspberry Pi 3 Model B+:llä. Mökillä on normaalisti jatkuva internetyhteys.
 
 Mökki sijaitsee saaressa itäisellä Suomenlahdella. Lännessä on saaristoa, mutta etelässä ja kaakossa avointa merta yli 40 kilometrin matkalla. Mökkipaikan ja sen edustalla olevan ulapan olosuhteet esitetään erillisinä.
 
@@ -386,7 +386,7 @@ Kokonaisuus voidaan jakaa useampaan pieneen OpenSpec-muutokseen.
 
 Lähteet tukevat alustavaa suunnittelua. Ne eivät korvaa rajapintojen tai käytettävän laitteen tarkistusta.
 
-- [Raspberry Pi 2 Model B: laiteversiot ja tekniset tiedot](https://www.raspberrypi.com/products/raspberry-pi-2-model-b/)
+- [Raspberry Pi 3 Model B+: laiteversiot ja tekniset tiedot](https://www.raspberrypi.com/products/raspberry-pi-3-model-b-plus/)
 - [Node.js: alustatuki](https://github.com/nodejs/node/blob/main/BUILDING.md) — muuttuva dokumentti; käytettävän version tuki tarkistettava erikseen.
 - [FMI: avatut tietoaineistot](https://www.ilmatieteenlaitos.fi/avoin-data-avattavat-aineistot)
 - [FMI: meriveden korkeusennuste](https://www.ilmatieteenlaitos.fi/avoin-data-meriveden-korkeusennuste)

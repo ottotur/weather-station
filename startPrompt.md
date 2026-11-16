@@ -1,6 +1,6 @@
 @grill-me
 
-Haluan suunnitella uuden sovelluksen alusta asti. Sovelluksen idea on: Sisäverkossa toimiva käyttöliittymä, joka kokoaa fmi:stä tulevan säädatan helposti hainnollistettavaan muotoon. Käyttöliittymää käytetään pääasiallisesti mobiililaitteella (tabletit ja älypuhelin). Sovelluksen on tarkoitus toimia Raspberry Pi 2 Model B:llä. Olennaisimmat ominaisuudet ovat: sääennuste, lähimmän mittauspisteen vedenkorkeuden ennuste. Jatkokehitys suunnitelmia ovat animoitu kartta, jossa näkyy sadepilvet ja salamat sekä lämpömittarin datan esitys käyttöliittymässä. (esim. ruuvitag https://ruuvi.com/fi/ruuvitag/)
+Haluan suunnitella uuden sovelluksen alusta asti. Sovelluksen idea on: Sisäverkossa toimiva käyttöliittymä, joka kokoaa fmi:stä tulevan säädatan helposti hainnollistettavaan muotoon. Käyttöliittymää käytetään pääasiallisesti mobiililaitteella (tabletit ja älypuhelin). Sovelluksen on tarkoitus toimia Raspberry Pi 3 Model B+:llä. Olennaisimmat ominaisuudet ovat: sääennuste, lähimmän mittauspisteen vedenkorkeuden ennuste. Jatkokehitys suunnitelmia ovat animoitu kartta, jossa näkyy sadepilvet ja salamat sekä lämpömittarin datan esitys käyttöliittymässä. (esim. ruuvitag https://ruuvi.com/fi/ruuvitag/)
 
 Haastattele minua perusteellisesti ennen toteutusta. Käy järjestelmällisesti läpi ainakin sovelluksen tarkoitus, käyttäjät, keskeiset ominaisuudet, MVP, tekniset vaihtoehdot, arkkitehtuuri, tietoturva, ylläpito ja mahdolliset riskit.
 
