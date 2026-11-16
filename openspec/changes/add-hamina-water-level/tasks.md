@@ -25,7 +25,7 @@ Päivitä `README.md`:tä ominaisuuksien valmistuessa, ei vasta lopuksi: pidä s
 ## 4. Pysyvä välimuisti
 
 - [ ] 4.1 Toteuta erilliset versioidut havainto- ja ennustetiedostot, tarkistettu lataus käynnistyksessä ja atominen korvaus ennen muistijulkaisua. Varmista tilapäishakemistotesteillä onnistunut uudelleenkäynnistys ja lähde-/yksikköaikojen säilyminen.
-- [ ] 4.2 Testaa kirjoitusvirhe, katkennut kirjoitus, jäljelle jäänyt väliaikaistiedosto, vioittunut tiedosto ja tuntematon tiedostoversio. Varmista aiemman aineiston säilyminen ja toisen aineiston riippumaton käyttö; dokumentoi tiedostomuoto ja virheestä palautuminen.
+- [ ] 4.2 Testaa kirjoitusvirhe, katkennut kirjoitus, jäljelle jäänyt väliaikaistiedosto, vioittunut tiedosto ja tuntematon tiedostoversio. Varmista ennen korvausta tapahtuvassa virheessä aiemman tiedoston ja muistiaineiston säilyminen sekä toisen aineiston riippumaton käyttö. Simuloi korvauksen jälkeisen hakemistosynkronoinnin virhe: muistissa säilyy vanha aineisto, epävarma tallennustila raportoidaan ja uudelleenkäynnistys voi lukea uuden tiedoston. Dokumentoi tiedostomuoto ja virheestä palautuminen.
 
 ## 5. Haku ja ajastus
 

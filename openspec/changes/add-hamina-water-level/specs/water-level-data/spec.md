@@ -47,7 +47,7 @@ Palvelimen SHALL merkitä havainto vanhentuneeksi, kun mittaushetken ikä ylitt�
 - **THEN** ennuste pysyy vanhentuneena vaikka viimeisin hakuyritys onnistui
 
 ### Requirement: Riippumaton pysyvä välimuisti
-Palvelimen SHALL säilyttää havainto ja ennuste erillisinä viimeisinä tarkistettuina aineistoina uudelleenkäynnistyksen yli. Uusi aineisto SHALL korvata vanha vasta onnistuneen tarkistuksen ja tallennuksen jälkeen. Yhden aineiston haku-, luku- tai kirjoitusvirhe ei SHALL estää toisen tarjoilua.
+Palvelimen SHALL säilyttää havainto ja ennuste erillisinä viimeisinä tarkistettuina aineistoina uudelleenkäynnistyksen yli. Uusi aineisto SHALL julkaista muistissa vasta onnistuneen tarkistuksen, atomisen korvauksen ja hakemiston synkronoinnin jälkeen. Ennen korvausta tapahtuva tallennusvirhe SHALL säilyttää aiempi kohdetiedosto ja muistissa julkaistu aineisto. Yhden aineiston haku-, luku- tai kirjoitusvirhe ei SHALL estää toisen tarjoilua.
 
 #### Scenario: Katkennut tallennus ja uudelleenkäynnistys
 - **WHEN** ennusteen tallennus keskeytyy ennen korvausta ja palvelin käynnistetään uudelleen
@@ -56,6 +56,13 @@ Palvelimen SHALL säilyttää havainto ja ennuste erillisinä viimeisinä tarkis
 #### Scenario: Vioittunut havaintovälimuisti
 - **WHEN** havaintovälimuisti ei ole luettavissa mutta ennustevälimuisti on kelvollinen
 - **THEN** havainto ilmoitetaan puuttuvaksi ja ennuste tarjotaan oman ikänsä mukaisessa tilassa
+
+### Requirement: Korvauksen jälkeinen epävarma tallennustila
+Jos korvaus onnistuu mutta hakemiston synkronointi epäonnistuu, palvelimen SHALL säilyttää aiempi muistissa julkaistu aineisto ja ilmoittaa erillisellä syykoodilla tallennuksen epävarma tila. Uusi tiedosto voi jo olla levyllä ja tulla ladatuksi uudelleenkäynnistyksessä.
+
+#### Scenario: Hakemiston synkronointi epäonnistuu korvauksen jälkeen
+- **WHEN** tarkistettu uusi aineisto on atomisesti korvannut kohdetiedoston mutta hakemiston synkronointi epäonnistuu
+- **THEN** muistissa tarjotaan aiempi aineisto ja raportoidaan tallennuksen epävarma tila; uudelleenkäynnistyksessä voidaan lukea uusi tiedosto eikä aiemman tiedoston säilymistä luvata
 
 ### Requirement: Paikallinen rajapinta erottaa datan ja häiriön
 Palvelimen SHALL tarjota `GET /api/water-level/hamina` JSON-muodossa myös osittaisessa tai tyhjässä datatilassa. Vastauksen SHALL sisältää palvelinaika, asema, cm/N2000, lähdeajat, tuoreus, todellinen kattavuus, puutteet ja viimeisen hakuyrityksen tulos kummallekin aineistolle. Ei-äärellisiä JSON-lukuja ei SHALL lähettää.
