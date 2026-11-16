@@ -6,7 +6,7 @@
   type Response = {
     serverTime: string;
     observation: { status: string; data: { valueCm: number; observedAt: string } | null; attempt: Attempt };
-    forecast: { status: string; data: { analysisTime: string; unitStatus: string } | null; points: Point[]; hasFutureValues: boolean; attempt: Attempt };
+    forecast: { status: string; data: { analysisTime: string; unitStatus: string } | null; points: Point[]; hasFutureValues: boolean; lastShownAt: string | null; attempt: Attempt };
     summary: { rise: { changeCm: number; at: string | null }; fall: { changeCm: number; at: string | null }; hasGaps: boolean } | null;
     summaryReason: string;
   };
@@ -92,6 +92,7 @@
       <h2>Ennuste seuraaville 48 tunnille</h2>
       <p>{status(data.forecast.status)}{#if data.forecast.attempt.result === 'error'} · {attemptMessage(data.forecast.attempt)}{/if}</p>
       {#if data.forecast.data}<p>Mallin viiteaika {formatTime(data.forecast.data.analysisTime)}</p>{/if}
+      {#if data.forecast.lastShownAt}<p>Näytettävää ennustetta viimeistään {formatTime(data.forecast.lastShownAt)} asti.</p>{/if}
       {#if !data.forecast.hasFutureValues}<p>Voimassa olevaa ennustetta ei ole saatavilla.</p>{/if}
       {#if finite.length}
         <svg viewBox="0 0 600 200" role="img" aria-label="Ennustetun vedenkorkeuden kaavio">
