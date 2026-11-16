@@ -9,7 +9,7 @@ Päivitä `README.md`:tä ominaisuuksien valmistuessa, ei vasta lopuksi: pidä s
 - [x] 1.1 Tarkista tuetut Go-, Node- ja käyttöliittymätyökalujen versiot sekä Ubuntu WSL:n versio ja arkkitehtuuri. Kirjaa valinnat kehitysohjeeseen; varmista versiot työkalujen omilla komennoilla ja päivitä selvityksen Go-version sijasta ajantasainen tuettu korjausversio.
 - [x] 1.2 Luo Go-palvelimen ja Svelte + TypeScript + Vite -käyttöliittymän runko designin mukaisiin hakemistoihin. Varmista, että Go-testi, käyttöliittymän tyyppitarkistus ja staattinen rakennus onnistuvat, eikä generoituja riippuvuushakemistoja lisätä Gitiin.
 - [x] 1.3 Lisää asetukset kuunteluosoitteelle, välimuistihakemistolle ja staattisille tiedostoille sekä testikäyttöön kellolle/lähdeosoitteelle. Dokumentoi WSL:n Linux-tiedostojärjestelmässä ajo ja localhost-oletus; varmista, että virheelliset asetukset tuottavat selkeän käynnistysvirheen.
-- [ ] 1.4 Lisää `README.md`:hen projektin tarkoitus, toteutuksen senhetkinen valmiusaste, paikallisen kehitysajon pikaohje ja linkit tarkempiin kehitys-/testausohjeisiin. Varmista käynnistys ohjeen komennoilla Ubuntu WSL:ssä ja tarkista paikallisten linkkien kohteet.
+- [x] 1.4 Lisää `README.md`:hen projektin tarkoitus, toteutuksen senhetkinen valmiusaste, paikallisen kehitysajon pikaohje ja linkit tarkempiin kehitys-/testausohjeisiin. Varmista käynnistys ohjeen komennoilla Ubuntu WSL:ssä ja tarkista paikallisten linkkien kohteet.
 
 ## 2. FMI-aineistojen tulkinta ja normalisointi
 
