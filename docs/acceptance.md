@@ -21,10 +21,20 @@ Selaintestit käsittävät 360, 768 ja 1024 CSS-pikselin leveydet,
 koonmuutokset ja emuloidun kosketuksen. Emulaatio ei todista oikean laitteen
 kosketuksen, selaimen tai suorituskyvyn toimintaa.
 
+## Windows-selaimen rajattu automaattitarkistus
+
+Windowsin Google Chrome 157.0.8103.52 avasi WSL-palvelimen osoitteessa
+`http://localhost:18092/` headless-tilassa. Paikallisella WFS-valepalvelimella
+ja kiinteällä testikellolla selaimen renderöity DOM sisälsi havainnon 32,1 cm,
+tuoreustilan ja ennustekaavion. WSL:n localhost-välitys siis toimi tässä
+kokeessa. Live-FMI:tä, palomuurimuutoksia tai lähiverkkokuuntelua ei käytetty.
+Headless-ajo ei tarkista manuaalisesti ulkoasua tai vuorovaikutusta eikä korvaa
+oikean laitteen kosketusta.
+
 ## Avoimet hyväksynnät
 
-- Windows 11:n oikeassa selaimessa tehtävää WSL localhost -tarkistusta ei ole
-  tehty; selainversiota ja localhost-välityksen toimintaa ei ole varmennettu.
+- Windows 11:n selaimen manuaalinen näkymä-, vuorovaikutus- ja häiriötilojen
+  tarkistus on tekemättä. Headless-tulos yllä on rajattu automaattinäyttö.
 - Raspberry Pi:n käyttöjärjestelmää ei ole asennettu eikä laitetta ole ajettu
   tai testattu. Ristiinkäännös ei ole Pi-ajotesti.
 - Oikeiden puhelinten Safari-, Android Chrome- ja Firefox-testit sekä iPadin
