@@ -23,6 +23,7 @@ const (
 	omso  = "http://inspire.ec.europa.eu/schemas/omso/3.0"
 	gml   = "http://www.opengis.net/gml/3.2"
 	wml   = "http://www.opengis.net/waterml/2.0"
+	swe   = "http://www.opengis.net/swe/2.0"
 	xlink = "http://www.w3.org/1999/xlink"
 )
 
@@ -257,10 +258,12 @@ func ParseForecast(data []byte, now time.Time) (*waterlevel.Forecast, error) {
 	if err != nil {
 		return nil, err
 	}
-	for _, unit := range s.all(wml, "uom") {
-		code := unit.attr("", "code")
-		if code != "" && code != "cm" {
-			return nil, errors.New("conflicting forecast unit")
+	for _, namespace := range []string{wml, swe} {
+		for _, unit := range s.all(namespace, "uom") {
+			code := unit.attr("", "code")
+			if code != "" && code != "cm" {
+				return nil, errors.New("conflicting forecast unit")
+			}
 		}
 	}
 	p, err := points(s)

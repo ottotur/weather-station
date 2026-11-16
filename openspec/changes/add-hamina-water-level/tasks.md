@@ -15,7 +15,7 @@ Päivitä `README.md`:tä ominaisuuksien valmistuessa, ei vasta lopuksi: pidä s
 
 - [x] 2.1 Toteuta havaintojen parseri ja mm → cm -normalisointi. Varmista alkuperäisellä näytteellä asema, suure, viimeisin äärellinen arvo 32,1 cm ja mittausaika; lisää testit väärälle asemalle/suureelle, tyhjille arvoille ja aikavirheille.
 - [x] 2.2 Toteuta `SeaLevelN2000`-ennusteen parseri, sisäisten aikaviitteiden ratkaisu sekä viite-/tulos-/voimassaoloaikojen erottelu. Varmista näytteellä 114 äärellistä pistettä ja seitsemän puuttuvaa loppupistettä sekä testaa sisäiset aukot, puuttuva viiteaika ja `SeaLevel`-korvauksen estyminen.
-- [ ] 2.3 Lisää yksikkötulkinnan alkuperä ja tarkistussäännöt aineistomalliin. Testaa cm-oletuksen säilyminen ja virheellisen XML:n, WFS-poikkeuksen, kaikkien arvojen puuttumisen, väärän lukutekstin ja ristiriitaisen yksikkötiedon hylkäys. Dokumentoi tulkinta muuttamatta alkuperäisiä XML-näytteitä.
+- [x] 2.3 Lisää yksikkötulkinnan alkuperä ja tarkistussäännöt aineistomalliin. Testaa cm-oletuksen säilyminen ja virheellisen XML:n, WFS-poikkeuksen, kaikkien arvojen puuttumisen, väärän lukutekstin ja ristiriitaisen yksikkötiedon hylkäys. Dokumentoi tulkinta muuttamatta alkuperäisiä XML-näytteitä.
 
 ## 3. Tuoreus ja muutoksen laskenta
 

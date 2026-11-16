@@ -66,15 +66,10 @@ func TestForecastSample(t *testing.T) {
 		`<ows:ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1"/>`,
 		regexp.MustCompile(`<wml2:value>[^<]*</wml2:value>`).ReplaceAllString(data, "<wml2:value>NaN</wml2:value>"),
 		strings.Replace(data, `<wml2:MeasurementTimeseries gml:id="mts-1-1-SeaLevelN2000">`, `<wml2:MeasurementTimeseries gml:id="mts-1-1-SeaLevelN2000"><wml2:uom code="mm"/>`, 1),
+		strings.Replace(data, `<wml2:MeasurementTimeseries gml:id="mts-1-1-SeaLevelN2000">`, `<wml2:MeasurementTimeseries gml:id="mts-1-1-SeaLevelN2000"><swe:uom code="mm"/>`, 1),
 	} {
 		if _, err := ParseForecast([]byte(bad), now); err == nil {
 			t.Fatal("invalid forecast accepted")
-		}
-	}
-	badPoint := strings.Replace(data, "<wml2:value>40.0</wml2:value>", "<wml2:value>not-a-number</wml2:value>", 1)
-	if badPoint != data {
-		if _, err := ParseForecast([]byte(badPoint), now); err == nil {
-			t.Fatal("invalid number accepted")
 		}
 	}
 	marker := `<wml2:MeasurementTimeseries gml:id="mts-1-1-SeaLevelN2000">`
@@ -85,6 +80,10 @@ func TestForecastSample(t *testing.T) {
 	tail := data[start:]
 	re := regexp.MustCompile(`<wml2:value>[^<]*</wml2:value>`)
 	loc := re.FindStringIndex(tail)
+	badPoint := data[:start] + tail[:loc[0]] + "<wml2:value>not-a-number</wml2:value>" + tail[loc[1]:]
+	if _, err := ParseForecast([]byte(badPoint), now); err == nil {
+		t.Fatal("invalid number accepted")
+	}
 	loc2 := re.FindStringIndex(tail[loc[1]:])
 	pos := loc[1] + loc2[0]
 	gap := data[:start] + tail[:pos] + re.ReplaceAllString(tail[pos:pos+loc2[1]-loc2[0]], "<wml2:value>NaN</wml2:value>") + tail[loc[1]+loc2[1]:]
