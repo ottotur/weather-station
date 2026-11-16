@@ -145,17 +145,17 @@ func schedule(ctx context.Context, interval time.Duration, refresh func(context.
 }
 func scheduleWithTicker(ctx context.Context, interval time.Duration, refresh func(context.Context), newTicker func(time.Duration) (<-chan time.Time, func())) {
 	refresh(ctx)
-	ticks, stop := newTicker(interval)
-	defer stop()
-	scheduleTicks(ctx, ticks, refresh)
-}
-
-func scheduleTicks(ctx context.Context, ticks <-chan time.Time, refresh func(context.Context)) {
 	for {
+		if ctx.Err() != nil {
+			return
+		}
+		ticks, stop := newTicker(interval)
 		select {
 		case <-ctx.Done():
+			stop()
 			return
 		case <-ticks:
+			stop()
 			refresh(ctx)
 		}
 	}

@@ -157,3 +157,40 @@ func TestScheduleWaitsForNormalTickAfterFailure(t *testing.T) {
 		})
 	}
 }
+
+func TestScheduleDiscardsTickDuringSlowRefresh(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	created := make(chan chan time.Time, 3)
+	calls := make(chan int, 3)
+	release := make(chan struct{})
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		count := 0
+		scheduleWithTicker(ctx, 10*time.Minute, func(context.Context) {
+			count++
+			calls <- count
+			if count == 2 {
+				<-release
+			}
+		}, func(time.Duration) (<-chan time.Time, func()) {
+			ticks := make(chan time.Time, 1)
+			created <- ticks
+			return ticks, func() {}
+		})
+	}()
+	<-calls
+	ticks := <-created
+	ticks <- time.Now()
+	<-calls
+	ticks <- time.Now()
+	close(release)
+	select {
+	case <-calls:
+		t.Fatal("new fetch started immediately after slow failed fetch")
+	case <-time.After(100 * time.Millisecond):
+	}
+	cancel()
+	<-done
+}
