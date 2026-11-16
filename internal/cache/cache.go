@@ -136,10 +136,19 @@ func (s Store) SaveForecast(f *waterlevel.Forecast) error {
 	return s.write("forecast.json", envelope[*waterlevel.Forecast]{Version: 1, Source: "FMI", Station: "-10022823", Parameter: "SeaLevelN2000", Data: f})
 }
 func (s Store) LoadObservation() (*waterlevel.Observation, error) {
-	o, err := read[*waterlevel.Observation](s, "observation.json", "134254", "WLEVN2K_PT1S_INSTANT")
+	type storedObservation struct {
+		ValueCM    *float64  `json:"valueCm"`
+		ObservedAt time.Time `json:"observedAt"`
+		FetchedAt  time.Time `json:"fetchedAt"`
+	}
+	stored, err := read[*storedObservation](s, "observation.json", "134254", "WLEVN2K_PT1S_INSTANT")
 	if err != nil {
 		return nil, fmt.Errorf("observation cache: %w", err)
 	}
+	if stored == nil || stored.ValueCM == nil {
+		return nil, errors.New("missing cached observation value")
+	}
+	o := &waterlevel.Observation{ValueCM: *stored.ValueCM, ObservedAt: stored.ObservedAt, FetchedAt: stored.FetchedAt}
 	if err = validObservation(o); err != nil {
 		return nil, err
 	}
