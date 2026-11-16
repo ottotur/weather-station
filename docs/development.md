@@ -26,10 +26,10 @@ go run ./cmd/weather-station
 
 Oletusosoite on `http://127.0.0.1:8080`. `WEATHER_LISTEN` vaihtaa
 kuunteluosoitteen, `WEATHER_STATIC_DIR` staattisen hakemiston ja
-`WEATHER_CACHE_DIR` välimuistihakemiston. `WEATHER_SOURCE_URL` on varattu
-FMI-lähteen osoitteelle testejä varten; lähdehakua ei ole vielä toteutettu.
-Kello annetaan laskentafunktioille erikseen, ja käynnistysasetukset sisältävät
-testattavan kellofunktion. Palvelin ei vielä käytä kumpaakaan hakuihin.
+`WEATHER_CACHE_DIR` välimuistihakemiston. `WEATHER_SOURCE_URL` vaihtaa
+FMI-lähteen osoitteen esimerkiksi paikallista testipalvelinta varten.
+Oletuksilla käynnistys aloittaa todelliset FMI-haut. Kello voidaan antaa
+laskenta- ja palvelukerrokselle erikseen testeissä.
 
 Vedenkorkeuden laskentamallissa havainnon tuoreus määräytyy mittausajasta
 (30 minuuttia) ja ennusteen tuoreus `analysisTime`-mallin viiteajasta
@@ -56,4 +56,4 @@ Havainnon millimetrit muunnetaan senttimetreiksi. `SeaLevelN2000`-ennusteen cm
 on käyttäjän hyväksymä oletus, ei suoraan varmennettu yksikkömetatieto.
 FMI:n selvityksessä tarkistetut käyttörajat ja niiden lähteet:
 [vedenkorkeusselvitys](feasibility/water-level.md#dokumentoidut-kyselyt-ja-käyttöehdot).
-Suunnitellut hakuvälit ovat 10 ja 30 minuuttia, mutta ajastusta ei vielä ole.
+Hakuvälit ovat 10 ja 30 minuuttia. Toteutuksen koko ketjun testaus on kesken.
