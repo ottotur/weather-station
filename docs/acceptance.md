@@ -35,13 +35,15 @@ oikean laitteen kosketusta.
 
 Käyttäjä ilmoitti 2026-11-16 testanneensa näkymää Windowsissa selaimella
 Brave 1.99.57 (64-bittinen, Chromium 157.0.8103.79): hänen mukaansa kaikki
-näytti toimivan. Raportissa ei yksilöity testattuja toimintoja, häiriötiloja
-tai kosketusemulaatiota, joten niitä ei tulkita erikseen hyväksytyiksi.
+näytti toimivan. Käyttäjä vahvisti erikseen, että tuntitaulukon avaaminen,
+kaavion pisteen valinta ja näkymä kapeassa selainikkunassa toimivat oikein.
+Ikkunan tarkkaa leveyttä, häiriötiloja tai kosketusemulaatiota ei ilmoitettu,
+joten niitä ei tulkita erikseen hyväksytyiksi.
 
 ## Avoimet hyväksynnät
 
-- Windows 11:n selaimen tarkemmat manuaaliset vuorovaikutus- ja häiriötilojen
-  tarkistukset sekä kosketusemulaation rajat ovat vielä erittelemättä.
+- Windows 11:n selaimen manuaaliset häiriötilojen tarkistukset sekä
+  kosketusemulaation rajat ovat vielä erittelemättä.
 - Raspberry Pi:n käyttöjärjestelmää ei ole asennettu eikä laitetta ole ajettu
   tai testattu. Ristiinkäännös ei ole Pi-ajotesti.
 - Oikeiden puhelinten Safari-, Android Chrome- ja Firefox-testit sekä iPadin
