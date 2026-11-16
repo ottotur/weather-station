@@ -8,6 +8,8 @@ Projektikuvauksen §6, §8, §13 ja §15 rajaavat selvitystä: Svelte + TypeScri
 
 Design tarvitaan, jotta erotetaan todistusaineisto, tekninen ehdotus ja käyttäjän hyväksymä päätös ennen ensimmäisen toiminnon suunnittelua.
 
+Käyttäjän tarkentamat lähtötiedot: laite on piirilevymerkinnän mukaan Raspberry Pi 3 Model B+, vuosimerkintä 2017, ei aiemmin oletettu Pi 2 Model B. Laite ei ole tällä hetkellä käyttökunnossa. Käyttäjä aikoo alustaa sen ennen sääaseman asennusta ja sallii tarkoitukseen parhaiten sopivan käyttöjärjestelmän ehdottamisen. Nykyistä asennusta ei tarvitse tutkia. Käyttäjä on valinnut ensimmäiseksi vedenkorkeusasemaksi Haminan. Nämä ovat käyttäjän ilmoittamia tietoja ja päätöksiä, eivät laiteajolla tai FMI-vastauksilla varmennettuja tuloksia.
+
 ## Goals / Non-Goals
 
 **Goals:**
@@ -39,19 +41,19 @@ Tulosten pääpaikka on `docs/feasibility/water-level.md`. Rakenne:
 
 Vaihtoehto olisi kirjoittaa nyt sovelluksen vedenkorkeusspeksi. Se hylätään, koska aineiston saatavuus ja tekniset riippuvuudet eivät ole vielä varmistettuja. Muutos on dokumentaatiomuutos, joten delta-speksit ohitetaan metatiedolla `skip_specs: true`.
 
-### 2. Laitetuki varmennetaan lukevilla tarkistuksilla
+### 2. Laitetuki selvitetään mallin ja tulevan puhtaan asennuksen perusteella
 
-Pyydetään käyttäjältä Pi:n mallin/revision, suoritinarkkitehtuurin, käyttöjärjestelmän version ja käyttäjätilan bittisyyden tiedot. Tarvittaessa annetaan lukevat tarkistuskomennot; laiteyhteyttä ei oleteta eikä tunnuksia tallenneta projektiin.
+Kirjataan käyttäjän ilmoittama Raspberry Pi 3 Model B+ ja piirilevyn vuosimerkintä 2017 sekä tietojen alkuperä. Mallin suoritinarkkitehtuuri ja mahdollinen tuen kannalta olennainen revisiotieto tarkistetaan virallisista laitetiedoista; vuosimerkintää ei tulkita revisioksi. Jos mallimerkintä ei riitä olennaisen tiedon varmistamiseen, pyydetään vain tarvittava lisätieto piirilevystä. Laitteen käynnistämistä, laiteyhteyttä tai nykyisen käyttöjärjestelmän ja käyttäjätilan bittisyyden selvittämistä ei edellytetä. Tunnuksia tai yksityisiä verkkotietoja ei tallenneta projektiin.
 
-Verrataan tietoja Raspberry Pi:n, käyttöjärjestelmän ylläpitäjän ja Go:n virallisiin, ajantasaisiin tukitietoihin. Dokumentoidaan mahdollinen tuettu käyttöjärjestelmäversio, Go-versio ja käännöskohde tarvittavine ARM-asetuksineen, tukitilanne ja lähteet. Pelkkä prosessorin kyvykkyys ei todista asennetun käyttöjärjestelmän arkkitehtuuria tai tukea.
+Verrataan mallin tietoja Raspberry Pi:n, käyttöjärjestelmän ylläpitäjän ja Go:n virallisiin, ajantasaisiin tukitietoihin. Dokumentoidaan tulevaa puhdasta asennusta varten ehdotettu tuettu käyttöjärjestelmäversio, sen arkkitehtuuri ja käyttäjätilan bittisyys, Go-versio ja käännöskohde tarvittavine ARM-asetuksineen, tukitilanne ja lähteet. Nykyinen asennus merkitään tutkimatta jätetyksi käyttäjän suunnitteleman alustuksen vuoksi; sen tietojen puuttuminen ei yksin estä dokumentoidun asennuskohteen ehdottamista.
 
-Käännöskohde on perusteltu ehdotus, ei väite laitteella onnistuneesta ajosta. Oikean ohjelman käännös- ja ajotesti kuuluu erilliseen myöhempään toteutusmuutokseen. Jos tietoja ei saada tai tuettua yhdistelmää ei löydy, merkitään este eikä vaihdeta automaattisesti palvelinkieltä tai käyttöjärjestelmää.
+Käännöskohde ja käyttöjärjestelmä ovat perusteltuja ehdotuksia, eivät väitteitä tehdystä asennuksesta tai laitteella onnistuneesta ajosta. Käyttäjän lupa ehdottaa sopivaa käyttöjärjestelmää ei tarkoita tietyn version tai Go:n lopullista hyväksyntää. Oikean ohjelman käännös- ja ajotesti kuuluu erilliseen myöhempään toteutusmuutokseen. Jos olennaisia laitetietoja ei saada tai tuettua yhdistelmää ei löydy, merkitään este ja palautetaan jatkopäätös käyttäjälle.
 
 Vaihtoehto olisi asentaa Pi uudelleen tai kirjoittaa testipalvelin tässä muutoksessa. Ne laajentaisivat dokumentaatioselvityksen laite- ja koodimuutokseksi ilman tarvetta.
 
 ### 3. FMI-tarkistus kattaa vain yhden hyväksytyn aseman
 
-Pyydetään käyttäjää valitsemaan vedenkorkeusasema. Tarvittaessa esitetään FMI:n asematiedoista löydetyt sopivat vaihtoehdot käyttäjän ilmoittamalta alueelta; ei vaadita mökin tarkkoja koordinaatteja. Asemaa ei päätetä pelkän teknisen saatavuuden perusteella.
+Ensimmäinen asema on käyttäjän valitsema Hamina. Kirjataan valinta ja hyväksynnän alkuperä raporttiin sekä varmennetaan FMI:n virallisista asematiedoista aseman nimi ja havainto- sekä ennusteaineistojen tunnisteet. Valinnan perusteeksi kirjataan käyttäjän valinta; muita perusteluja ei oleteta eikä mökin tarkkoja koordinaatteja vaadita. Jos aineisto ei ole saatavilla Haminasta, asemaa ei vaihdeta ilman käyttäjän uutta hyväksyntää.
 
 Etsitään dokumentoidut havainto- ja ennustekyselyt, tarkistetaan käyttöehdot ja hakurajat ennen rajattua hakua ja tallennetaan kummastakin todellinen vastaus samalle asemalle. Virhevastauksesta ei päätellä, ettei aineistoa ole: kirjataan virhe, tarkistetaan kysely ja dokumentaatio sekä tarvittaessa kirjataan selvityksen este.
 
@@ -75,7 +77,7 @@ Selvitys voidaan hyväksyä dokumentaationa myös silloin, kun se löytää este
 
 Yhden aseman toiminnon jatkosuunnittelu on mahdollista vasta, kun:
 
-- Pi:n lähtötiedot ja virallisiin lähteisiin perustuva tuettu ajokohde on dokumentoitu; alustavien teknologiavalintojen hyväksyntä tai tarvittava jatkopäätös näkyy;
+- Pi:n malliin perustuvat lähtötiedot ja virallisiin lähteisiin perustuva tuettu ajokohde tulevalle puhtaalle asennukselle on dokumentoitu; alustavien teknologiavalintojen hyväksyntä tai tarvittava jatkopäätös näkyy. Nykyisen asennuksen tietoja ei vaadita;
 - käyttäjä on hyväksynyt aseman ja sen havainto sekä pääennuste on varmennettu todellisista vastauksista;
 - yksiköt, N2000, aikatietojen merkitys ja todellinen ennustejakso tunnetaan;
 - käyttöehdot, hakurajat ja lähdemerkintä voidaan ottaa huomioon;
@@ -85,7 +87,7 @@ Epävarmuusrajojen puuttuminen ei yksin estä jatkamista, koska ne ovat projekti
 
 ## Risks / Trade-offs
 
-- [Pi ei ole saavutettavissa] → Käyttäjälle tarkat tietopyynnöt; ei arvauksia, ja jatkosuunnittelu merkitään tarvittaessa estyneeksi.
+- [Pi ei ole käyttökunnossa] → Selvitys perustuu käyttäjän ilmoittamaan mallimerkintään ja virallisiin tukitietoihin. Nykyistä asennusta ei tarvitse tutkia, mutta mallin olennaiset epäselvyydet kirjataan esteiksi ja laiteajo jää myöhempään toteutusmuutokseen.
 - [Dokumentaatio ja vastaus eroavat] → Molemmat lähteet ja tarkistusajat kirjataan; ristiriita säilytetään näkyvänä.
 - [Yksi vastaus ei todista jatkuvaa saatavuutta tai julkaisurytmiä] → Erotetaan hetkellinen havainto dokumentoidusta lupauksesta; myöhempi toteutus tarvitsee häiriötestit.
 - [Go-tuki dokumenteissa ei takaa oikean ohjelman toimintaa Pi:llä] → Ei väitetä ajotestiä tehdyksi; testi jää myöhempään toteutusmuutokseen ennen teknologian lopullista lukitsemista.

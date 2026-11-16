@@ -6,8 +6,8 @@
 
 ## What Changes
 
-- Toteutetaan rajattu osa vaiheesta 0: tarkistetaan Raspberry Pi 2 Model B:n ajotuki sekä yhden käyttäjän hyväksymän vedenkorkeusaseman FMI-havainto ja -ennuste.
-- Kootaan tulokset tiedostoon `docs/feasibility/water-level.md`: laitteelta saadut tiedot, dokumentaatiolähteet, toistettavat kyselyt, todellisten vastausten havainnot, käyttöehdot ja avoimet päätökset.
+- Toteutetaan rajattu osa vaiheesta 0: tarkistetaan käyttäjän ilmoittaman Raspberry Pi 3 Model B+:n (piirilevyn vuosimerkintä 2017) dokumentoitu ajotuki sekä käyttäjän hyväksymän Haminan vedenkorkeusaseman FMI-havainto ja -ennuste.
+- Kootaan tulokset tiedostoon `docs/feasibility/water-level.md`: käyttäjän ilmoittamat laitetiedot, dokumentaatiolähteet, toistettavat kyselyt, todellisten vastausten havainnot, käyttöehdot ja avoimet päätökset.
 - Tallennetaan vain tarvittavat julkiset esimerkkivastaukset ja niiden alkuperätiedot hakemistoon `docs/feasibility/evidence/`. Arkaluonteisia yhteystietoja tai mökkikoordinaatteja ei tallenneta.
 - Päätetään näytön perusteella, voidaanko yhden aseman ensimmäinen kokonainen toiminto suunnitella vai tarvitaanko käyttäjän päätös esteestä.
 - Ei toteuteta palvelinta, käyttöliittymää, ajastusta, välimuistia, palveluasennusta tai julkaisua. Ei valita mökin tai ulapan pisteitä eikä selvitetä muita sääaineistoja.
@@ -25,6 +25,6 @@ Ei muutoksia. Projektissa ei vielä ole pääspeksifikaatioita.
 ## Impact
 
 - Muutoksen toteutus lisää vain selvitysdokumentaatiota ja rajattuja julkisia lähdenäytteitä. Sovelluskoodia tai uusia ajonaikaisia riippuvuuksia ei synny.
-- Laiteversion, käyttöjärjestelmän ja arkkitehtuurin tarkistus tarvitsee käyttäjän antamat tiedot tai erikseen myönnetyn laiteyhteyden. Käyttöjärjestelmää ei asenneta eikä laitteen asetuksia muuteta.
-- FMI-tarkistus käyttää vain dokumentoituja avoimia rajapintoja niiden käyttörajojen mukaisesti. Aseman tarkoituksenmukaisuus hyväksytetään käyttäjällä.
+- Laite tunnistetaan käyttäjän antamista piirilevymerkinnöistä ja mallin tekniset tiedot tarkistetaan virallisista lähteistä. Laite ei ole tällä hetkellä käyttökunnossa ja käyttäjä aikoo alustaa sen ennen sääaseman asennusta, joten nykyistä käyttöjärjestelmää tai käyttäjätilan bittisyyttä ei tarvitse selvittää. Selvitetään mallille sopiva tuettu käyttöjärjestelmä–Go-yhdistelmä tulevaa puhdasta asennusta varten. Laitetta ei alusteta, käyttöjärjestelmää ei asenneta eikä laitteen asetuksia muuteta tässä muutoksessa.
+- FMI-tarkistus käyttää vain dokumentoituja avoimia rajapintoja niiden käyttörajojen mukaisesti. Käyttäjä on valinnut Haminan; aseman virallinen nimi ja aineistojen tunnisteet varmennetaan selvityksessä.
 - Selvitys ei hyväksy Go:ta, käyttöjärjestelmää tai puuttuvien tietojen korvaamista automaattisesti eikä tarkoita koko vaiheen 0 tai MVP:n valmistumista.
