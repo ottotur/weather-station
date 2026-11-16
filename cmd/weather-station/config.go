@@ -29,6 +29,13 @@ func loadConfig(getenv func(string) string) (config, error) {
 		sourceURL: value("WEATHER_SOURCE_URL", "https://opendata.fmi.fi/wfs"),
 		now:       time.Now,
 	}
+	if fixed := getenv("WEATHER_TEST_NOW"); fixed != "" {
+		t, err := time.Parse(time.RFC3339, fixed)
+		if err != nil {
+			return c, fmt.Errorf("WEATHER_TEST_NOW: expected RFC3339 time: %w", err)
+		}
+		c.now = func() time.Time { return t }
+	}
 	host, port, err := net.SplitHostPort(c.listen)
 	if err != nil || host == "" {
 		return c, fmt.Errorf("WEATHER_LISTEN: expected host:port")

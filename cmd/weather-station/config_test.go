@@ -17,6 +17,7 @@ func TestConfig(t *testing.T) {
 	for _, tc := range []struct{ key, value string }{
 		{"WEATHER_LISTEN", ":8080"}, {"WEATHER_LISTEN", "localhost:99999"},
 		{"WEATHER_SOURCE_URL", "file:///tmp/x"}, {"WEATHER_SOURCE_URL", "https://user:pass@example.com"},
+		{"WEATHER_TEST_NOW", "not-a-time"},
 		{"WEATHER_STATIC_DIR", filepath.Join(dir, "missing")}, {"WEATHER_CACHE_DIR", " "},
 	} {
 		old := base[tc.key]

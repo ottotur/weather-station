@@ -29,7 +29,9 @@ kuunteluosoitteen, `WEATHER_STATIC_DIR` staattisen hakemiston ja
 `WEATHER_CACHE_DIR` välimuistihakemiston. `WEATHER_SOURCE_URL` vaihtaa
 FMI-lähteen osoitteen esimerkiksi paikallista testipalvelinta varten.
 Oletuksilla käynnistys aloittaa todelliset FMI-haut. Kello voidaan antaa
-laskenta- ja palvelukerrokselle erikseen testeissä.
+laskenta- ja palvelukerrokselle erikseen testeissä. Koko ketjun testissä
+`WEATHER_TEST_NOW` lukitsee kellon RFC 3339 -aikaan; sitä ei tule käyttää
+normaalissa ajossa, koska jäädytetty kello estää tuoreuden oikean arvioinnin.
 
 Vedenkorkeuden laskentamallissa havainnon tuoreus määräytyy mittausajasta
 (30 minuuttia) ja ennusteen tuoreus `analysisTime`-mallin viiteajasta
@@ -87,6 +89,20 @@ testi. Testatut selainikkunoiden leveydet ovat 360, 768 ja 1024 CSS-pikseliä.
 Testeissä vaihdetaan myös korkeutta pysty- ja vaakasuhteiden välillä ja
 tarkistetaan kaavion leveys, yhteenvetojen ja tuntitaulukon näkyminen sekä
 sivutason vaakavierityksen puuttuminen.
+Koko ketjun testin toistettavat komennot projektin juuresta:
+
+```sh
+cd web
+npm ci
+npx playwright install chromium
+npm run build
+WEATHER_E2E_TMPDIR=/tmp/opencode npm test
+```
+
+Testi kääntää oikean Go-ohjelman, käynnistää paikallisen WFS-valepalvelimen
+ja käyttää alkuperäisiä näytevastauksia kiinteällä testikellolla. Se käy läpi
+normaalitilan, virheellisen vastauksen, lähdekatkon, vanhenemisen,
+uudelleenkäynnistykset ja palautumisen ilman live-FMI-riippuvuutta.
 Rakennetun käyttöliittymän Go-palvelintesti ajetaan projektin juuresta
 `WEATHER_TEST_WEB_DIST=../../web/dist go test -race ./cmd/weather-station`
 sen jälkeen, kun `npm run build` on tehty hakemistossa `web`. Polku tulkitaan
