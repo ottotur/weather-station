@@ -6,6 +6,8 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -18,6 +20,17 @@ type seeded struct {
 	empty
 	observation *waterlevel.Observation
 	forecast    *waterlevel.Forecast
+}
+
+type countingSource struct{ calls atomic.Int32 }
+
+func (s *countingSource) Observation(context.Context, time.Time) (*waterlevel.Observation, error) {
+	s.calls.Add(1)
+	return nil, errors.New("unexpected fetch")
+}
+func (s *countingSource) Forecast(context.Context, time.Time) (*waterlevel.Forecast, error) {
+	s.calls.Add(1)
+	return nil, errors.New("unexpected fetch")
 }
 
 func (s seeded) LoadObservation() (*waterlevel.Observation, error) { return s.observation, nil }
@@ -89,5 +102,35 @@ func TestForecastCoverageAndRange(t *testing.T) {
 	points := f["points"].([]any)
 	if len(points) != 2 || points[1].(map[string]any)["valueCm"] != nil {
 		t.Fatalf("%v", points)
+	}
+}
+
+func TestConcurrentClientsDoNotFetch(t *testing.T) {
+	now := time.Date(2026, 11, 16, 18, 0, 0, 0, time.UTC)
+	source := &countingSource{}
+	api := API{Service: waterlevel.NewService(source, empty{}, func() time.Time { return now }), Now: func() time.Time { return now }}
+	results := make(chan string, 10)
+	var wg sync.WaitGroup
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			res := httptest.NewRecorder()
+			api.ServeHTTP(res, httptest.NewRequest(http.MethodGet, "/", nil))
+			results <- res.Body.String()
+		}()
+	}
+	wg.Wait()
+	close(results)
+	first := ""
+	for result := range results {
+		if first == "" {
+			first = result
+		} else if result != first {
+			t.Fatal("inconsistent snapshots")
+		}
+	}
+	if source.calls.Load() != 0 {
+		t.Fatal("API triggered source fetch")
 	}
 }

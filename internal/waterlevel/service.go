@@ -135,14 +135,24 @@ func (s *Service) Run(ctx context.Context) {
 	go schedule(ctx, 30*time.Minute, s.RefreshForecast)
 }
 func schedule(ctx context.Context, interval time.Duration, refresh func(context.Context)) {
+	scheduleWithTicker(ctx, interval, refresh, func(interval time.Duration) (<-chan time.Time, func()) {
+		ticker := time.NewTicker(interval)
+		return ticker.C, ticker.Stop
+	})
+}
+func scheduleWithTicker(ctx context.Context, interval time.Duration, refresh func(context.Context), newTicker func(time.Duration) (<-chan time.Time, func())) {
 	refresh(ctx)
-	ticker := time.NewTicker(interval)
-	defer ticker.Stop()
+	ticks, stop := newTicker(interval)
+	defer stop()
+	scheduleTicks(ctx, ticks, refresh)
+}
+
+func scheduleTicks(ctx context.Context, ticks <-chan time.Time, refresh func(context.Context)) {
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		case <-ticker.C:
+		case <-ticks:
 			refresh(ctx)
 		}
 	}

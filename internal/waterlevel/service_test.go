@@ -94,3 +94,36 @@ func TestRefreshDoesNotOverlap(t *testing.T) {
 		t.Fatalf("calls: %d", source.calls)
 	}
 }
+
+func TestScheduleWaitsForNormalTickAfterFailure(t *testing.T) {
+	for _, interval := range []time.Duration{10 * time.Minute, 30 * time.Minute} {
+		t.Run(interval.String(), func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			ticks := make(chan time.Time)
+			calls := make(chan struct{}, 2)
+			ready := make(chan time.Duration, 1)
+			done := make(chan struct{})
+			go func() {
+				defer close(done)
+				scheduleWithTicker(ctx, interval, func(context.Context) { calls <- struct{}{} }, func(d time.Duration) (<-chan time.Time, func()) {
+					ready <- d
+					return ticks, func() {}
+				})
+			}()
+			<-calls
+			if got := <-ready; got != interval {
+				t.Fatalf("interval %v", got)
+			}
+			select {
+			case <-calls:
+				t.Fatal("immediate retry")
+			default:
+			}
+			ticks <- time.Date(2026, 11, 16, 18, 0, 0, 0, time.UTC).Add(interval)
+			<-calls
+			cancel()
+			<-done
+		})
+	}
+}
