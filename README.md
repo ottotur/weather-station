@@ -23,3 +23,4 @@ pysäyttää painamalla Ctrl+C. Kehitysympäristö, asetukset ja testausohje:
 [docs/development.md](docs/development.md).
 Näkymän tilojen selitys: [docs/user.md](docs/user.md).
 Myöhemmän, erikseen luvitettavan laiteajon ohje: [docs/pi-run.md](docs/pi-run.md).
+Toteutuneet tarkistukset ja avoimet hyväksynnät: [docs/acceptance.md](docs/acceptance.md).

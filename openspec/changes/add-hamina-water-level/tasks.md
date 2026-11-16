@@ -47,7 +47,7 @@ Päivitä `README.md`:tä ominaisuuksien valmistuessa, ei vasta lopuksi: pidä s
 ## 8. Kehityskoneen koko ketjun hyväksyntä — taso A
 
 - [x] 8.1 Lisää toistettava koko ketjun testiajo oikealla Go-palvelimella, paikallisella WFS-valepalvelimella ja rakennetulla käyttöliittymällä. Varmista hausta näkymään normaalitila, lähdekatko, vanheneminen, virheellinen vastaus, uudelleenkäynnistys ja toipuminen ilman live-FMI-riippuvuutta; dokumentoi täsmälliset ajokomennot.
-- [ ] 8.2 Suorita Go-testit, soveltuva race-tarkistus, `go vet`, Svelte/TypeScript-tarkistus, käyttöliittymätestit ja rakennukset. Ristiinkäännä `GOOS=linux GOARCH=arm64 GOARM64=v8.0 CGO_ENABLED=0`; kirjaa tulokset erikseen host-ajosta äläkä merkitse Pi-ajotestiä tehdyksi.
+- [x] 8.2 Suorita Go-testit, soveltuva race-tarkistus, `go vet`, Svelte/TypeScript-tarkistus, käyttöliittymätestit ja rakennukset. Ristiinkäännä `GOOS=linux GOARCH=arm64 GOARM64=v8.0 CGO_ENABLED=0`; kirjaa tulokset erikseen host-ajosta äläkä merkitse Pi-ajotestiä tehdyksi.
 - [ ] 8.3 Varmista rakennettu sovellus Windows 11:n selaimessa WSL:n localhost-osoitteesta. Kirjaa selain, WSL-versio, kosketusemulaation rajat ja näkyvät häiriötilat hyväksyntäraporttiin; dokumentoi mahdollinen localhost-välityksen este ilman automaattisia palomuuri-/verkkomuutoksia.
 - [ ] 8.4 Tee kehityskonehyväksynnän dokumentaation kokonaisuustarkistus: varmista `README.md`:n valmiusaste, pikaohjeet ja linkit kehitys-, testaus- ja Pi-ajo-ohjeisiin. Suorita dokumentoidut kehityskoneen käynnistys- ja testikomennot; varmista, ettei ohje väitä Pi- tai mobiililaitehyväksyntää tehdyksi.
 
