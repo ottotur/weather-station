@@ -25,6 +25,25 @@ type Attempt struct {
 	Result    string     `json:"result"`
 	ErrorCode *string    `json:"errorCode"`
 }
+
+func newAttempt(at time.Time, sourceErr, cacheErr error) Attempt {
+	attempt := Attempt{At: &at, Result: "success"}
+	var code string
+	switch {
+	case sourceErr != nil:
+		code = "source_error"
+	case errors.Is(cacheErr, ErrDurabilityUncertain):
+		code = "cache_durability_uncertain"
+	case cacheErr != nil:
+		code = "cache_error"
+	default:
+		return attempt
+	}
+	attempt.Result = "error"
+	attempt.ErrorCode = &code
+	return attempt
+}
+
 type Snapshot struct {
 	Observation        *Observation
 	Forecast           *Forecast
@@ -80,24 +99,16 @@ func (s *Service) RefreshObservation(ctx context.Context) {
 	}
 	defer s.observationMu.Unlock()
 	now := s.now().UTC()
-	o, err := s.source.Observation(ctx, now)
-	code := "source_error"
-	if err == nil {
-		err = s.store.SaveObservation(o)
-		code = "cache_error"
-		if errors.Is(err, ErrDurabilityUncertain) {
-			code = "cache_durability_uncertain"
-		}
+	o, sourceErr := s.source.Observation(ctx, now)
+	var cacheErr error
+	if sourceErr == nil {
+		cacheErr = s.store.SaveObservation(o)
 	}
-	attempt := Attempt{At: &now, Result: "success"}
-	if err != nil {
-		attempt.Result = "error"
-		attempt.ErrorCode = &code
-	}
+	attempt := newAttempt(now, sourceErr, cacheErr)
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.state.ObservationAttempt = attempt
-	if err == nil {
+	if sourceErr == nil && cacheErr == nil {
 		s.state.Observation = o
 	}
 }
@@ -108,24 +119,16 @@ func (s *Service) RefreshForecast(ctx context.Context) {
 	}
 	defer s.forecastMu.Unlock()
 	now := s.now().UTC()
-	f, err := s.source.Forecast(ctx, now)
-	code := "source_error"
-	if err == nil {
-		err = s.store.SaveForecast(f)
-		code = "cache_error"
-		if errors.Is(err, ErrDurabilityUncertain) {
-			code = "cache_durability_uncertain"
-		}
+	f, sourceErr := s.source.Forecast(ctx, now)
+	var cacheErr error
+	if sourceErr == nil {
+		cacheErr = s.store.SaveForecast(f)
 	}
-	attempt := Attempt{At: &now, Result: "success"}
-	if err != nil {
-		attempt.Result = "error"
-		attempt.ErrorCode = &code
-	}
+	attempt := newAttempt(now, sourceErr, cacheErr)
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.state.ForecastAttempt = attempt
-	if err == nil {
+	if sourceErr == nil && cacheErr == nil {
 		s.state.Forecast = f
 	}
 }

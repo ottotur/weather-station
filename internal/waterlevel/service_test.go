@@ -3,10 +3,40 @@ package waterlevel
 import (
 	"context"
 	"errors"
+	"fmt"
 	"sync"
 	"testing"
 	"time"
 )
+
+func TestNewAttempt(t *testing.T) {
+	now := time.Date(2026, 11, 17, 0, 0, 0, 0, time.UTC)
+	for _, tc := range []struct {
+		name      string
+		sourceErr error
+		cacheErr  error
+		want      string
+	}{
+		{name: "success"},
+		{name: "source error", sourceErr: errors.New("source"), want: "source_error"},
+		{name: "cache error", cacheErr: errors.New("cache"), want: "cache_error"},
+		{name: "uncertain durability", cacheErr: fmt.Errorf("sync: %w", ErrDurabilityUncertain), want: "cache_durability_uncertain"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			got := newAttempt(now, tc.sourceErr, tc.cacheErr)
+			if got.At == nil || !got.At.Equal(now) {
+				t.Fatalf("unexpected attempt time: %+v", got)
+			}
+			if tc.want == "" {
+				if got.Result != "success" || got.ErrorCode != nil {
+					t.Fatalf("unexpected success: %+v", got)
+				}
+			} else if got.Result != "error" || got.ErrorCode == nil || *got.ErrorCode != tc.want {
+				t.Fatalf("unexpected error: %+v", got)
+			}
+		})
+	}
+}
 
 type fakeSource struct {
 	calls   int
