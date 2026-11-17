@@ -30,8 +30,8 @@ käyttäjälle; pistettä ei vaihdeta hiljaisesti. Havainto, piste-ennuste ja
 edustavuusarvio eivät ole sama asia.
 
 Alkuperäviitteet:
-[proposal](../../openspec/changes/verify-weather-wind-feasibility/proposal.md),
-[design](../../openspec/changes/verify-weather-wind-feasibility/design.md).
+[proposal](../../openspec/changes/archive/2026-11-17-verify-weather-wind-feasibility/proposal.md),
+[design](../../openspec/changes/archive/2026-11-17-verify-weather-wind-feasibility/design.md).
 
 ## 2. Tuulihavaintoaseman valinta — Rankki hyväksytty
 
