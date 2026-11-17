@@ -21,6 +21,7 @@ const (
 	wfs   = "http://www.opengis.net/wfs/2.0"
 	om    = "http://www.opengis.net/om/2.0"
 	omso  = "http://inspire.ec.europa.eu/schemas/omso/3.0"
+	omop  = "http://inspire.ec.europa.eu/schemas/omop/2.9"
 	gml   = "http://www.opengis.net/gml/3.2"
 	wml   = "http://www.opengis.net/waterml/2.0"
 	swe   = "http://www.opengis.net/swe/2.0"
@@ -35,12 +36,17 @@ type element struct {
 }
 
 func (e *element) attr(space, local string) string {
+	value, _ := e.attribute(space, local)
+	return value
+}
+
+func (e *element) attribute(space, local string) (string, bool) {
 	for _, a := range e.Attrs {
 		if a.Name.Space == space && a.Name.Local == local {
-			return a.Value
+			return a.Value, true
 		}
 	}
-	return ""
+	return "", false
 }
 func (e *element) all(space, local string) []*element {
 	var out []*element
@@ -118,6 +124,26 @@ func utc(s string) (time.Time, error) {
 	return t, nil
 }
 
+func utcPosition(node *element) (time.Time, error) {
+	for _, attr := range node.Attrs {
+		if attr.Name.Space == xlink && attr.Name.Local == "href" {
+			return time.Time{}, errors.New("unsupported reference on time position")
+		}
+		if attr.Name.Space != "" {
+			continue
+		}
+		switch attr.Name.Local {
+		case "indeterminatePosition":
+			return time.Time{}, errors.New("indeterminate time position")
+		case "frame":
+			if attr.Value != "#ISO-8601" {
+				return time.Time{}, errors.New("unsupported time reference system")
+			}
+		}
+	}
+	return utc(strings.TrimSpace(node.Text))
+}
+
 func selectSeries(root *element, property, station, stationCode string) (*element, error) {
 	var matches []*element
 	for _, series := range root.all(omso, "PointTimeSeriesObservation") {
@@ -169,7 +195,7 @@ func points(series *element) ([]rawPoint, error) {
 		if err != nil {
 			return nil, err
 		}
-		t, err := utc(strings.TrimSpace(tn.Text))
+		t, err := utcPosition(tn)
 		if err != nil {
 			return nil, err
 		}
@@ -201,13 +227,13 @@ func points(series *element) ([]rawPoint, error) {
 }
 
 func instant(root, node *element) (time.Time, error) {
-	if node.attr(xlink, "href") == "" {
-		instants := node.all(gml, "TimeInstant")
-		if len(instants) == 1 && instants[0] != node && instants[0].attr(xlink, "href") != "" {
-			node = instants[0]
+	if href, present := node.attribute(xlink, "href"); present {
+		if node.Name.Space == gml && node.Name.Local == "TimeInstant" {
+			return time.Time{}, errors.New("reference on TimeInstant")
 		}
-	}
-	if href := node.attr(xlink, "href"); href != "" {
+		if len(node.Children) != 0 || strings.TrimSpace(node.Text) != "" {
+			return time.Time{}, errors.New("time reference also contains a value")
+		}
 		if !strings.HasPrefix(href, "#") || len(href) == 1 {
 			return time.Time{}, errors.New("external time reference")
 		}
@@ -222,11 +248,41 @@ func instant(root, node *element) (time.Time, error) {
 		}
 		node = matches[0]
 	}
+	instants := node.all(gml, "TimeInstant")
+	if len(instants) != 1 {
+		return time.Time{}, errors.New("invalid time instant")
+	}
+	node = instants[0]
+	if _, present := node.attribute(xlink, "href"); present {
+		return time.Time{}, errors.New("reference on TimeInstant")
+	}
 	pos, err := one(node, gml, "timePosition")
 	if err != nil {
 		return time.Time{}, err
 	}
-	return utc(strings.TrimSpace(pos.Text))
+	return utcPosition(pos)
+}
+
+func periodBoundary(root, period *element, positionName, propertyName string) (time.Time, error) {
+	var boundary *element
+	for _, child := range period.Children {
+		if child.Name.Space == gml && (child.Name.Local == positionName || child.Name.Local == propertyName) {
+			if boundary != nil {
+				return time.Time{}, errors.New("ambiguous time period boundary")
+			}
+			boundary = child
+		}
+	}
+	if boundary == nil {
+		return time.Time{}, errors.New("missing time period boundary")
+	}
+	if boundary.Name.Local == propertyName {
+		return instant(root, boundary)
+	}
+	if _, present := boundary.attribute(xlink, "href"); present || len(boundary.Children) != 0 {
+		return time.Time{}, errors.New("invalid time position")
+	}
+	return utcPosition(boundary)
 }
 
 func validatePhenomenonTime(root, series *element) error {
@@ -234,7 +290,10 @@ func validatePhenomenonTime(root, series *element) error {
 	if err != nil {
 		return err
 	}
-	if href := node.attr(xlink, "href"); href != "" {
+	if href, present := node.attribute(xlink, "href"); present {
+		if len(node.Children) != 0 || strings.TrimSpace(node.Text) != "" {
+			return errors.New("phenomenon time reference also contains a value")
+		}
 		if !strings.HasPrefix(href, "#") || len(href) == 1 {
 			return errors.New("external phenomenon time reference")
 		}
@@ -251,22 +310,29 @@ func validatePhenomenonTime(root, series *element) error {
 		}
 		node = targets[0]
 	}
-	periods := node.all(gml, "TimePeriod")
-	instants := node.all(gml, "TimeInstant")
-	if len(periods) == 1 && len(instants) == 0 {
-		begin, err := one(periods[0], gml, "beginPosition")
+	var objects []*element
+	if node.Name.Space == gml && (node.Name.Local == "TimePeriod" || node.Name.Local == "TimeInstant") {
+		objects = append(objects, node)
+	} else {
+		for _, child := range node.Children {
+			if child.Name.Space == gml && (child.Name.Local == "TimePeriod" || child.Name.Local == "TimeInstant") {
+				objects = append(objects, child)
+			}
+		}
+	}
+	if len(objects) != 1 {
+		return errors.New("invalid phenomenon time")
+	}
+	object := objects[0]
+	if object.Name.Local == "TimePeriod" {
+		if _, present := object.attribute(xlink, "href"); present {
+			return errors.New("unsupported reference on TimePeriod")
+		}
+		startTime, err := periodBoundary(root, object, "beginPosition", "begin")
 		if err != nil {
 			return err
 		}
-		end, err := one(periods[0], gml, "endPosition")
-		if err != nil {
-			return err
-		}
-		startTime, err := utc(strings.TrimSpace(begin.Text))
-		if err != nil {
-			return err
-		}
-		endTime, err := utc(strings.TrimSpace(end.Text))
+		endTime, err := periodBoundary(root, object, "endPosition", "end")
 		if err != nil {
 			return err
 		}
@@ -275,11 +341,8 @@ func validatePhenomenonTime(root, series *element) error {
 		}
 		return nil
 	}
-	if len(periods) == 0 && len(instants) == 1 {
-		_, err := instant(root, instants[0])
-		return err
-	}
-	return errors.New("invalid phenomenon time")
+	_, err = instant(root, object)
+	return err
 }
 
 // validateUnit checks only metadata belonging to the selected series. Missing
@@ -289,29 +352,46 @@ func validateUnit(series *element, expected string) error {
 		"http://qudt.org/vocab/unit/MilliM": "mm",
 		"http://qudt.org/vocab/unit/CentiM": "cm",
 	}
-	for _, namespace := range []string{wml, swe} {
-		for _, elementName := range []string{"uom", "unitOfMeasure"} {
-			for _, unit := range series.all(namespace, elementName) {
-				declared := false
-				for _, attr := range unit.Attrs {
-					value := strings.TrimSpace(attr.Value)
-					switch {
-					case attr.Name.Space == "" && (attr.Name.Local == "code" || attr.Name.Local == "uom"):
-						declared = true
-						if value != expected {
-							return fmt.Errorf("%w: contradictory or unknown unit code", waterlevel.ErrUnitMetadata)
-						}
-					case attr.Name.Space == xlink && attr.Name.Local == "href":
-						declared = true
-						if identifiers[value] != expected {
-							return fmt.Errorf("%w: contradictory or unknown unit reference", waterlevel.ErrUnitMetadata)
-						}
-					}
+	var units []*element
+	var collect func(*element)
+	collect = func(node *element) {
+		if node.Name.Local == "uom" || node.Name.Local == "unitOfMeasure" {
+			units = append(units, node)
+		}
+		for _, child := range node.Children {
+			collect(child)
+		}
+	}
+	collect(series)
+	for _, value := range series.all(wml, "value") {
+		for _, attr := range value.Attrs {
+			if attr.Name.Space == "" && attr.Name.Local == "uom" && strings.TrimSpace(attr.Value) != expected {
+				return fmt.Errorf("%w: contradictory or unknown value unit", waterlevel.ErrUnitMetadata)
+			}
+		}
+	}
+	for _, unit := range units {
+		if unit.Name.Space != wml && unit.Name.Space != swe && unit.Name.Space != omop {
+			return fmt.Errorf("%w: unknown unit namespace", waterlevel.ErrUnitMetadata)
+		}
+		declared := false
+		for _, attr := range unit.Attrs {
+			value := strings.TrimSpace(attr.Value)
+			switch {
+			case attr.Name.Space == "" && (attr.Name.Local == "code" || attr.Name.Local == "uom"):
+				declared = true
+				if value != expected {
+					return fmt.Errorf("%w: contradictory or unknown unit code", waterlevel.ErrUnitMetadata)
 				}
-				if !declared || strings.TrimSpace(unit.Text) != "" || len(unit.Children) > 0 {
-					return fmt.Errorf("%w: unsupported unit declaration", waterlevel.ErrUnitMetadata)
+			case attr.Name.Space == xlink && attr.Name.Local == "href":
+				declared = true
+				if identifiers[value] != expected {
+					return fmt.Errorf("%w: contradictory or unknown unit reference", waterlevel.ErrUnitMetadata)
 				}
 			}
+		}
+		if !declared || strings.TrimSpace(unit.Text) != "" || len(unit.Children) > 0 {
+			return fmt.Errorf("%w: unsupported unit declaration", waterlevel.ErrUnitMetadata)
 		}
 	}
 	return nil

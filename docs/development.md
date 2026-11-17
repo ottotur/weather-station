@@ -76,7 +76,7 @@ Lähde: Ilmatieteen laitos, avoin data, [CC BY 4.0](https://creativecommons.org/
 Havainnon millimetrit muunnetaan senttimetreiksi. `SeaLevelN2000`-ennusteen cm
 on käyttäjän hyväksymä oletus, ei suoraan varmennettu yksikkömetatieto.
 Jos vastaus ilmoittaa yksikkötiedon, valitun sarjan `wml2:uom`- ja
-`swe:uom`- sekä `unitOfMeasure`-elementtien `code`-, `uom`- ja
+`swe:uom`-, `omop:uom`- sekä `unitOfMeasure`-elementtien `code`-, `uom`- ja
 `xlink:href`-tiedot tarkistetaan. Hyväksytyt koodit ovat havainnolle `mm`
 ja ennusteelle `cm`; hyväksytyt viitteet ovat täsmälliset QUDT-tunnisteet
 [`unit:MilliM`](https://qudt.org/vocab/unit/MilliM) ja
@@ -84,6 +84,8 @@ ja ennusteelle `cm`; hyväksytyt viitteet ovat täsmälliset QUDT-tunnisteet
 ajonaikaisesti. Muu tai ristiriitainen ilmoitettu tieto hylätään; puuttuva
 metatieto hyväksytään nykyisellä tulkinnalla eikä ennusteen oletus muutu
 varmennetuksi tiedoksi.
+Myös WaterML-pistearvon `uom` tarkistetaan. Tulkinnan rajaus, skeemalähteet
+ja testimatriisi ovat [XML-selvityksessä](feasibility/water-level-xml-schema.md).
 FMI:n selvityksessä tarkistetut käyttörajat ja niiden lähteet:
 [vedenkorkeusselvitys](feasibility/water-level.md#dokumentoidut-kyselyt-ja-käyttöehdot).
 Hakuvälit ovat 10 ja 30 minuuttia. Toteutuksen koko ketjun testaus on kesken.
