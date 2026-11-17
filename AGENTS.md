@@ -13,7 +13,11 @@
 - Run applicable tests, linting and build checks before proposing a merge.
 - Never commit secrets, credentials, `.env` files or generated dependencies.
 - Never force-push or discard existing uncommitted work.
-- Do not merge into `main` without explicit user approval.
+- Deliver changes to `main` through a GitHub pull request, not a local merge.
+- When asked to create a pull request, push the feature branch, open or update
+  the PR, and report the required CI checks and any failures.
+- Merge the PR only after explicit user approval and successful required checks.
+  After merging, update the local `main` from the remote.
 - After completing a change, report:
   - Current branch
   - Commits created
