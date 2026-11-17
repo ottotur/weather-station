@@ -4,10 +4,10 @@ Tehtävät koskevat vain selvityksen toteuttamista erillisen apply-pyynnön jäl
 
 ## 1. Kohteet ja lähdekäytön edellytykset
 
-- [ ] 1.1 Aloita `docs/feasibility/weather-wind.md`: kirjaa käyttäjän testimökkipiste 60.434318, 26.687825, sen ero lopulliseen sijaintiin ja selvityksen rajaus. Varmista, ettei raportti esitä testipistettä lopullisena mökkipaikkana.
+- [ ] 1.1 Aloita `docs/feasibility/weather-wind.md`: kirjaa käyttäjän valitsemat testimökkipiste 60.434318, 26.687825 ja testiulappapiste 60.414616, 26.697395 sekä valintojen alkuperä ja selvityksen rajaus. Varmista, ettei raportti esitä testipisteitä lopullisina sijainteina tai edellytä ulappapisteen uutta valintaa.
 - [ ] 1.2 Tarkista FMI:n ajantasaiset dokumentoidut sääennuste- ja tuulihavaintokyselyt, koordinaattikäytäntö, käyttöehdot, hakurajat ja lähdemerkintä. Kirjaa URL:t ja tarkistuspäivät raporttiin; varmista sallitut parametrit ennen aineistonäytehakuja.
-- [ ] 1.3 Selvitä enintään kaksi ulappapiste- ja kaksi tuulihavaintoasemaehdokasta virallisten sijainti-/asematietojen avulla. Kirjaa sijainnit, asematunnisteet, etäisyydet ja edustavuuden perustelut raporttiin; tarkista, ettei lähintä asemaa nimetä automaattisesti edustavimmaksi.
-- [ ] 1.4 Esitä käyttäjälle suositeltu ulappapiste ja havaintoasema sekä vaihtoehdot. Kirjaa hyväksytty valinta ja hyväksynnän alkuperä raporttiin ennen näiden kohteiden aineistonäytteitä; pysähdy niiden osalta, jos hyväksyntää ei saada.
+- [ ] 1.3 Selvitä enintään kaksi tuulihavaintoasemaehdokasta virallisten sijainti-/asematietojen avulla. Kirjaa sijainnit, asematunnisteet, etäisyydet ja edustavuuden perustelut raporttiin; tarkista, ettei lähintä asemaa nimetä automaattisesti edustavimmaksi.
+- [ ] 1.4 Esitä käyttäjälle suositeltu havaintoasema ja mahdollinen vaihtoehto. Kirjaa hyväksytty valinta ja hyväksynnän alkuperä raporttiin ennen aseman aineistonäytteitä; pysähdy aseman osalta, jos hyväksyntää ei saada. Testimökki- ja testiulappapiste eivät tarvitse uutta sijaintihyväksyntää.
 
 ## 2. Testimökkipisteen sää- ja tuuliennuste
 
@@ -17,7 +17,7 @@ Tehtävät koskevat vain selvityksen toteuttamista erillisen apply-pyynnön jäl
 
 ## 3. Hyväksytyn ulappapisteen ja aseman tuuli
 
-- [ ] 3.1 Tee hyväksytylle ulappapisteelle rajattu enintään 48 h tuuliennustehaku. Tallenna muuttamaton vastaus ja manifestitiedot; tarkista sijainti, keskituuli, puuskat, tulosuunta, yksiköt, lähdeajat, aukot ja kattavuus. Lisää tulokset raporttiin ja varmista ne offline-näytteestä.
+- [ ] 3.1 Tee käyttäjän valitsemalle testiulappapisteelle 60.414616, 26.697395 rajattu enintään 48 h tuuliennustehaku. Tallenna muuttamaton vastaus ja manifestitiedot; tarkista pyydetty ja palautettu mallipiste, keskituuli, puuskat, tulosuunta, yksiköt, lähdeajat, aukot ja kattavuus. Lisää tulokset raporttiin ja varmista ne offline-näytteestä; palauta mahdollinen sijaintiin liittyvä este käyttäjälle vaihtamatta pistettä hiljaisesti.
 - [ ] 3.2 Tee hyväksytylle havaintoasemalle rajattu havaintohaku aluksi enintään viimeiseltä tunnilta. Tallenna vastaus ja manifestitiedot; varmista aseman tunniste, viimeisin saatavilla oleva äärellinen arvo suureittain, mittausajat ja tuulisuureiden keskiarvoistusjaksot. Kirjaa puutteet raporttiin; älä korvaa puuttuvaa puuskaa laskennallisella arvolla.
 - [ ] 3.3 Kokoa aineistokohtaiset dokumentoidut päivitysrytmit ja ehdotus myöhemmistä haku-/vanhentumisrajoista perusteluineen. Varmista raportista, että ehdotukset erotetaan hyväksytyistä päätöksistä ja ettei vedenkorkeuden rajoja ole kopioitu ilman sääaineiston perusteita.
 

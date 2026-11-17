@@ -6,7 +6,7 @@ Motivaatio: `proposal.md`, Why. `docs/PROJECT_BRIEF.md` §4 määrittelee tavoit
 
 Aiempaa lähdenäyttöä on `docs/feasibility/water-level.md`:ssä ja sen manifestissa. Sama alkuperäisvastauksen, lähdeviitteen, tarkistuspäivän ja tulkinnan erottelu sopii sääselvitykseen. Pääspeksifikaatioita ei vielä ole; vedenkorkeuden vaatimukset ovat aiemman muutoksen delta-speksifikaatioissa, joita tämä työ ei muuta.
 
-Käyttäjä antoi testipisteen 60.434318, 26.687825 (leveysaste, pituusaste). Sitä saa käsitellä tässä suunnitelmassa testisijaintina, ei lopullisen mökin sijaintina tai edustavuuden todisteena. Ulappapistettä ja tuulihavaintoasemaa ei ole valittu. Pi:n kunnostus on lykätty käyttäjän päätöksellä; käytettävissä on Proxmox-palvelin, jonka kokoonpanoa ei ole tutkittu.
+Käyttäjä antoi testimökkipisteen 60.434318, 26.687825 ja valitsi myöhemmin testiulappapisteeksi 60.414616, 26.697395 (leveysaste, pituusaste). Pisteitä käsitellään testisijainteina, ei lopullisina sijainteina tai edustavuuden todisteena. Ulappapisteen valinta on käyttäjän hyväksymä; tuulihavaintoasemaa ei ole valittu. Pi:n kunnostus on lykätty käyttäjän päätöksellä; käytettävissä on Proxmox-palvelin, jonka kokoonpanoa ei ole tutkittu.
 
 ## Goals / Non-Goals
 
@@ -33,11 +33,11 @@ Vaihtoehto olisi lukita uuden sovellustoiminnon vaatimukset heti. Se hylätään
 
 ### 2. Sijaintivalinnat porttina aineistonäytteille
 
-Testimökkipiste on annettu leveys-/pituusasteina; rajapinnan vaatima koordinaattijärjestelmä ja järjestys varmennetaan dokumentaatiosta. Mahdollinen palautettu mallipiste kirjataan erikseen pyydetystä pisteestä.
+Testimökkipiste 60.434318, 26.687825 ja testiulappapiste 60.414616, 26.697395 on annettu leveys-/pituusasteina; rajapinnan vaatima koordinaattijärjestelmä ja järjestys varmennetaan dokumentaatiosta. Kummankin mahdollinen palautettu mallipiste kirjataan erikseen pyydetystä pisteestä. Ulappapisteelle ei etsitä vaihtoehtoja eikä sen valintaa hyväksytetä uudelleen. Jos aineisto ei kata pistettä tai palautettu mallipiste ei sovellu tarkoitukseen, puute palautetaan käyttäjälle eikä sijaintia vaihdeta hiljaisesti.
 
-Selvitetään virallisista sijainti- ja asematiedoista enintään kaksi perusteltua ulappapiste- ja kaksi tuulihavaintoasemaehdokasta. Kirjataan koordinaatit, aseman nimi ja tunniste sekä valintaperuste: etäisyys, meri-/maa-altistus ja saatavilla olevat suureet. Lähin asema ei automaattisesti ole edustavin. Testialueen ominaisuuksia ei päätellä lopullisen mökkipaikan kuvauksesta.
+Selvitetään virallisista sijainti- ja asematiedoista enintään kaksi perusteltua tuulihavaintoasemaehdokasta. Kirjataan koordinaatit, aseman nimi ja tunniste sekä valintaperuste: etäisyys, meri-/maa-altistus ja saatavilla olevat suureet. Lähin asema ei automaattisesti ole edustavin. Testialueen ominaisuuksia ei päätellä lopullisen mökkipaikan kuvauksesta.
 
-Esitetään yksi suositeltu yhdistelmä käyttäjälle. Metatietohakuja voi tehdä ehdokkaiden selvittämiseksi, mutta ulapan ja aseman varsinaiset aineistonäytehaut odottavat valinnan hyväksyntää. Testimökkipisteen lähteitä voi tarkistaa erikseen. Valinnan puuttuessa kirjataan täsmällinen esto eikä merkitä koko selvitystä valmiiksi.
+Esitetään yksi suositeltu havaintoasema käyttäjälle. Metatietohakuja voi tehdä ehdokkaiden selvittämiseksi, mutta aseman varsinaiset aineistonäytehaut odottavat valinnan hyväksyntää. Käyttäjän jo valitsemien testimökki- ja testiulappapisteiden lähteitä voi tarkistaa selvityksen apply-vaiheessa ilman uutta sijaintihyväksyntää. Asemavalinnan puuttuessa kirjataan täsmällinen esto eikä merkitä koko selvitystä valmiiksi.
 
 ### 3. Pieni lähdematriisi, ei kaikkien mallien vertailua
 
@@ -76,7 +76,7 @@ Vaihtoehtona olisi odottaa Pi:tä ennen muuta kehitystä. Sitä ei tarvita läht
 
 ### 6. Selvityksen hyväksymisehdot
 
-- Testimökkipiste on merkitty testiksi; ulappapisteen ja havaintoaseman valinnat sekä käyttäjän hyväksyntä on kirjattu alkuperineen.
+- Testimökki- ja testiulappapiste on merkitty testeiksi ja käyttäjän antamat koordinaatit kirjattu alkuperineen; myös havaintoaseman valinta ja käyttäjän hyväksyntä on kirjattu.
 - Jokaiselle matriisin suureelle on lähteistetty saatavuustulos, merkitys ja yksikkö tai nimenomainen puute. Ei hiljaisia lähde- tai laskentakorvauksia.
 - Jokaisesta valitusta aineistosta on kohdistettu todellinen vastaus, toistettavat kyselyt ja tarkistettu aikakattavuus. HTTP 200 yksin ei ole hyväksyntä.
 - Näytteiden XML/rakenteellinen luettavuus, manifestin tiivisteet ja raportin paikalliset linkit on tarkistettu offline-toistamisohjeella. Alkuperäisiä vedenkorkeusnäytteitä ei ole muutettu.

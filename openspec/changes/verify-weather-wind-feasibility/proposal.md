@@ -6,8 +6,8 @@ Haminan vedenkorkeustoiminnon kehityskoneketju on toteutettu, mutta seuraavien M
 
 ## What Changes
 
-- Selvitetään FMI:n dokumentoiduista avoimista rajapinnoista testimökkipisteen **60.434318, 26.687825** sää- ja tuuliennusteiden saatavuus sekä erillisen ulappapisteen tuuliennuste ja soveltuvan lähiaseman tuulihavainnot.
-- Testipiste on käyttäjän tätä selvitystä varten antama sijainti, ei lopullinen mökkipaikka. Ehdotetaan ulappapistettä ja tuulihavaintoasemaa perusteluineen ja pyydetään käyttäjän hyväksyntä ennen niiden varsinaisia aineistonäytehakuja.
+- Selvitetään FMI:n dokumentoiduista avoimista rajapinnoista testimökkipisteen **60.434318, 26.687825** sää- ja tuuliennusteiden saatavuus sekä erillisen testiulappapisteen **60.414616, 26.697395** tuuliennuste ja soveltuvan lähiaseman tuulihavainnot.
+- Molemmat testipisteet ovat käyttäjän tätä selvitystä varten valitsemia, eivät lopullisia sijainteja. Ulappapistettä ei tarvitse valita tai hyväksyttää uudelleen. Ehdotetaan tuulihavaintoasemaa perusteluineen ja pyydetään käyttäjän hyväksyntä ennen aseman varsinaisia aineistonäytehakuja.
 - Kootaan lähteet, kyselyt, suureet, yksiköt, aikamerkitykset, todellinen kattavuus, puutteet ja käyttöehdot raporttiin `docs/feasibility/weather-wind.md`. Tallennetaan rajatut alkuperäiset julkiset vastaukset ja alkuperätiedot alihakemistoon `docs/feasibility/evidence/weather-wind/`.
 - Suositellaan näytön perusteella yhtä pientä seuraavaa toteutusmuutosta, ei koko muun MVP:n toteutusta.
 - Kirjataan Proxmoxissa ajettavan Linux-virtuaalikoneen mahdollinen rooli myöhemmässä integraatio- ja oikeiden mobiililaitteiden testauksessa. Pi:n laitehyväksyntä jää erilliseksi; käyttäjä aikoo kunnostaa laitteen vasta projektin valmistuttua.
