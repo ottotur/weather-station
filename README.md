@@ -1,9 +1,9 @@
 # Sääasema
 
 Sääasema hakee Haminan vedenkorkeushavainnon ja ennusteen sekä näyttää ne
-paikallisessa selainnäkymässä. Toteutus on keskeneräinen: koko ketjun
-hyväksyntätestit puuttuvat, eikä sovellusta ole testattu Raspberry Pi:llä
-tai oikeilla mobiililaitteilla. Ennusteen cm on käyttäjän hyväksymä oletus,
+paikallisessa selainnäkymässä. Koko ketju on hyväksyntätestattu kehityskoneella,
+mutta sovellusta ei ole testattu Raspberry Pi:llä tai oikeilla mobiililaitteilla.
+Ennusteen cm on käyttäjän hyväksymä oletus,
 ei suoraan varmennettu metatieto.
 
 ## Paikallinen ajo

@@ -12,7 +12,9 @@ versiot ovat Svelte 5.57.3, Vite 8.3.8, Svelte Vite -liitännäinen 7.3.1,
 TypeScript 5.9.3, Node-tyypit 24.19.2 ja svelte-check 4.7.8; versiot voi tarkistaa
 komennolla `npm ls --depth=0` hakemistossa `web`.
 
-Sovellus on keskeneräinen eikä sen koko ketjua ole vielä hyväksyntätestattu.
+Koko ketju on hyväksyntätestattu kehityskoneella. Raspberry Pi:n ja oikeiden
+mobiililaitteiden hyväksyntä on avoin; tarkistusten tulokset ja rajaukset ovat
+[hyväksyntäraportissa](acceptance.md).
 
 Rakennetun rungon voi käynnistää projektin juuresta:
 
@@ -88,14 +90,14 @@ Myös WaterML-pistearvon `uom` tarkistetaan. Tulkinnan rajaus, skeemalähteet
 ja testimatriisi ovat [XML-selvityksessä](feasibility/water-level-xml-schema.md).
 FMI:n selvityksessä tarkistetut käyttörajat ja niiden lähteet:
 [vedenkorkeusselvitys](feasibility/water-level.md#dokumentoidut-kyselyt-ja-käyttöehdot).
-Hakuvälit ovat 10 ja 30 minuuttia. Toteutuksen koko ketjun testaus on kesken.
+Hakuvälit ovat 10 ja 30 minuuttia.
 Rajapinnan kentät ja esimerkit: [api.md](api.md).
 
 ## Nykyiset automaattiset tarkistukset
 
 Projektin juuresta: `go test ./...`, `go test -race ./...` ja `go vet ./...`.
 Hakemistossa `web`: `npm run check` ja `npm run build`. Nämä eivät korvaa
-vielä puuttuvia koko ketjun selain- tai oikean laitteen testejä.
+alla kuvattuja koko ketjun selain- tai oikean laitteen testejä.
 Selaintestit: hakemistossa `web` ensin `npx playwright install chromium` ja
 sen jälkeen `npm test`. Chromiumin kosketusemulaatio ei ole oikean laitteen
 testi. Testatut selainikkunoiden leveydet ovat 360, 768 ja 1024 CSS-pikseliä.
@@ -120,3 +122,7 @@ Rakennetun käyttöliittymän Go-palvelintesti ajetaan projektin juuresta
 `WEATHER_TEST_WEB_DIST=../../web/dist go test -race ./cmd/weather-station`
 sen jälkeen, kun `npm run build` on tehty hakemistossa `web`. Polku tulkitaan
 testipaketin `cmd/weather-station` työhakemistosta.
+
+GitHub Actions ajaa nämä Go-, käyttöliittymä- ja selaintarkistukset sekä
+Linux arm64 -ristiinkäännöksen pull requesteille ja `main`-haaran päivityksille.
+CI:n tulokset eivät ole Raspberry Pi:n tai oikean mobiililaitteen hyväksyntä.
