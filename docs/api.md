@@ -42,6 +42,8 @@ Esimerkiksi tuore havainto voi säilyä käytössä hakuvirheestä huolimatta:
 `cache_error` tarkoittaa tallennusvirhettä ennen pysyvää julkaisua ja
 `cache_durability_uncertain` korvauksen jälkeistä hakemistosynkronoinnin
 virhettä; jälkimmäisessä levyllä voi olla uusi tiedosto vaikka muistissa on
-vanha aineisto. `summary` on `null`, jos vertailua ei voida tehdä; syy on
+vanha aineisto. `unit_metadata_error` tarkoittaa, että lähteen ilmoittama
+yksikkö on ristiriitainen tai tuntematon; aiempi tarkistettu aineisto säilyy.
+`summary` on `null`, jos vertailua ei voida tehdä; syy on
 `summaryReason`-kentässä. Muuten `rise` ja `fall` sisältävät `changeCm` ja
 `at` (nollamuutoksella `at: null`), ja `hasGaps` varoittaa sisäisistä aukoista.

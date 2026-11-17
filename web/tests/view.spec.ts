@@ -133,6 +133,17 @@ test('vanhentunut aineisto ja tallennuksen epävarmuus näkyvät', async ({ page
   await expect(page.getByText(/7,9 cm/)).toHaveCount(0);
 });
 
+test('lähteen yksikkövirhe erottuu yhteysvirheestä', async ({ page }) => {
+  const unitError = {
+    ...data,
+    observation: { ...data.observation, attempt: { result: 'error', errorCode: 'unit_metadata_error' } }
+  };
+  await page.route('**/api/water-level/hamina', route => route.fulfill({ json: unitError }));
+  await page.goto('/');
+  await expect(page.getByText(/Lähteen yksikkötieto on ristiriitainen tai tuntematon/)).toBeVisible();
+  await expect(page.getByText('32,1 cm', { exact: true })).toBeVisible();
+});
+
 test('ennusteen vanheneminen piilottaa yhteenvedon seuraavassa päivityksessä', async ({ page }) => {
   let stale = false;
   await page.clock.install();

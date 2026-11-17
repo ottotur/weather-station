@@ -282,6 +282,41 @@ func validatePhenomenonTime(root, series *element) error {
 	return errors.New("invalid phenomenon time")
 }
 
+// validateUnit checks only metadata belonging to the selected series. Missing
+// metadata is allowed; declared units must be explicit and known.
+func validateUnit(series *element, expected string) error {
+	identifiers := map[string]string{
+		"http://qudt.org/vocab/unit/MilliM": "mm",
+		"http://qudt.org/vocab/unit/CentiM": "cm",
+	}
+	for _, namespace := range []string{wml, swe} {
+		for _, elementName := range []string{"uom", "unitOfMeasure"} {
+			for _, unit := range series.all(namespace, elementName) {
+				declared := false
+				for _, attr := range unit.Attrs {
+					value := strings.TrimSpace(attr.Value)
+					switch {
+					case attr.Name.Space == "" && (attr.Name.Local == "code" || attr.Name.Local == "uom"):
+						declared = true
+						if value != expected {
+							return fmt.Errorf("%w: contradictory or unknown unit code", waterlevel.ErrUnitMetadata)
+						}
+					case attr.Name.Space == xlink && attr.Name.Local == "href":
+						declared = true
+						if identifiers[value] != expected {
+							return fmt.Errorf("%w: contradictory or unknown unit reference", waterlevel.ErrUnitMetadata)
+						}
+					}
+				}
+				if !declared || strings.TrimSpace(unit.Text) != "" || len(unit.Children) > 0 {
+					return fmt.Errorf("%w: unsupported unit declaration", waterlevel.ErrUnitMetadata)
+				}
+			}
+		}
+	}
+	return nil
+}
+
 // ParseObservation returns the latest finite observation, converted from mm to cm.
 func ParseObservation(data []byte, now time.Time) (*waterlevel.Observation, error) {
 	root, err := document(data)
@@ -293,6 +328,9 @@ func ParseObservation(data []byte, now time.Time) (*waterlevel.Observation, erro
 		return nil, err
 	}
 	if err := validatePhenomenonTime(root, s); err != nil {
+		return nil, err
+	}
+	if err := validateUnit(s, "mm"); err != nil {
 		return nil, err
 	}
 	resultTime, err := one(s, om, "resultTime")
@@ -331,13 +369,8 @@ func ParseForecast(data []byte, now time.Time) (*waterlevel.Forecast, error) {
 	if err := validatePhenomenonTime(root, s); err != nil {
 		return nil, err
 	}
-	for _, namespace := range []string{wml, swe} {
-		for _, unit := range s.all(namespace, "uom") {
-			code := unit.attr("", "code")
-			if code != "" && code != "cm" {
-				return nil, errors.New("conflicting forecast unit")
-			}
-		}
+	if err := validateUnit(s, "cm"); err != nil {
+		return nil, err
 	}
 	p, err := points(s)
 	if err != nil {

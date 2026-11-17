@@ -10,6 +10,9 @@ import (
 // ErrDurabilityUncertain means the file was replaced but directory sync failed.
 var ErrDurabilityUncertain = errors.New("cache durability uncertain")
 
+// ErrUnitMetadata means a source unit is contradictory or cannot be interpreted safely.
+var ErrUnitMetadata = errors.New("invalid source unit metadata")
+
 type Source interface {
 	Observation(context.Context, time.Time) (*Observation, error)
 	Forecast(context.Context, time.Time) (*Forecast, error)
@@ -30,6 +33,8 @@ func newAttempt(at time.Time, sourceErr, cacheErr error) Attempt {
 	attempt := Attempt{At: &at, Result: "success"}
 	var code string
 	switch {
+	case errors.Is(sourceErr, ErrUnitMetadata):
+		code = "unit_metadata_error"
 	case sourceErr != nil:
 		code = "source_error"
 	case errors.Is(cacheErr, ErrDurabilityUncertain):

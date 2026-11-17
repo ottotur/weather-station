@@ -19,6 +19,7 @@ func TestNewAttempt(t *testing.T) {
 	}{
 		{name: "success"},
 		{name: "source error", sourceErr: errors.New("source"), want: "source_error"},
+		{name: "unit metadata", sourceErr: fmt.Errorf("parse: %w", ErrUnitMetadata), want: "unit_metadata_error"},
 		{name: "cache error", cacheErr: errors.New("cache"), want: "cache_error"},
 		{name: "uncertain durability", cacheErr: fmt.Errorf("sync: %w", ErrDurabilityUncertain), want: "cache_durability_uncertain"},
 	} {

@@ -20,6 +20,11 @@ Tallennuksen epävarmuus tarkoittaa, että uusi tiedosto on voitu korvata, mutta
 hakemiston synkronointi epäonnistui; vanha aineisto säilyy näytössä. Uusi
 tiedosto voi silti tulla käyttöön palvelimen uudelleenkäynnistyksessä.
 
+Yksikkötietoa koskeva virheilmoitus tarkoittaa, että lähteen ilmoittama
+yksikkö on ristiriitainen tai tuntematon. Uutta aineistoa ei käytetä; aiempi
+tarkistettu tieto säilyy oman tuoreustilansa mukaisesti. Uusi yksikkötieto
+vaatii selvityksen ennen tulkinnan muuttamista.
+
 Lähde on Ilmatieteen laitos, CC BY 4.0. Havainto muunnetaan millimetreistä
 senttimetreiksi. Ennusteen cm-yksikkö on käyttäjän hyväksymä oletus, ei
 suoraan varmennettu FMI:n metatieto.

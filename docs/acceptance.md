@@ -27,6 +27,11 @@ Playwright-testiä; kaikki onnistuivat. Uudet testit kattavat vastaamatta
 jäävän rajapintapyynnön, ennusteesta poistuneen kaaviovalinnan ja päättyneen
 ennusteen yhteenvedon syyn. Tämä ei muuta laitehyväksynnän tilaa.
 
+Yksikkömetadatan tarkistuksen jälkeen 2026-11-17 ajettiin uudelleen Go-testit
+ja race-tarkistus, `go vet`, Svelte-tyyppitarkistus ja rakennus, 13
+Playwright-testiä sekä arm64-ristiinkäännös; kaikki onnistuivat. Myös
+`npm audit` ei raportoinut haavoittuvuuksia. Ristiinkäännös ei ole laiteajo.
+
 ## Windows-selaimen rajattu automaattitarkistus
 
 Windowsin Google Chrome 157.0.8103.52 avasi WSL-palvelimen osoitteessa

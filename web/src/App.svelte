@@ -22,9 +22,10 @@
   const formatTime = (s: string) => date.format(new Date(s));
   const number = (n: number) => n.toLocaleString('fi-FI', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const status = (s: string) => ({ fresh: 'Tuore', stale: 'Vanhentunut', missing: 'Puuttuu' }[s] ?? s);
-  const attemptMessage = (attempt: Attempt) => attempt.errorCode === 'cache_durability_uncertain'
-    ? 'Tallennuksen pysyvyys on epävarma; aiempi tieto on käytössä.'
-    : 'Viimeisin haku epäonnistui';
+  const attemptMessage = (attempt: Attempt) => ({
+    cache_durability_uncertain: 'Tallennuksen pysyvyys on epävarma; aiempi tieto on käytössä.',
+    unit_metadata_error: 'Lähteen yksikkötieto on ristiriitainen tai tuntematon; uutta aineistoa ei käytetä.'
+  }[attempt.errorCode ?? ''] ?? 'Viimeisin haku epäonnistui');
   const summaryMessage = (reason: string) => ({
     observation_missing: 'Havainto puuttuu.',
     observation_stale: 'Havainto on vanhentunut.',

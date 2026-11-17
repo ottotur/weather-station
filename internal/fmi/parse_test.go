@@ -126,3 +126,50 @@ func TestUnresolvedPhenomenonTimeRejected(t *testing.T) {
 		}
 	})
 }
+
+func TestUnitMetadata(t *testing.T) {
+	now := time.Date(2026, 11, 16, 18, 8, 0, 0, time.UTC)
+	for _, series := range []struct {
+		name, marker, expected, other, href, otherHref string
+	}{
+		{"observation", `<wml2:MeasurementTimeseries gml:id="obs-obs-1-1-WLEVN2K_PT1S_INSTANT">`, "mm", "cm", "http://qudt.org/vocab/unit/MilliM", "http://qudt.org/vocab/unit/CentiM"},
+		{"forecast", `<wml2:MeasurementTimeseries gml:id="mts-1-1-SeaLevelN2000">`, "cm", "mm", "http://qudt.org/vocab/unit/CentiM", "http://qudt.org/vocab/unit/MilliM"},
+	} {
+		t.Run(series.name, func(t *testing.T) {
+			original := sample(t, series.name)
+			for _, tc := range []struct {
+				name, unit string
+				valid      bool
+			}{
+				{"absent", "", true},
+				{"code", `<wml2:uom code="` + series.expected + `"/>`, true},
+				{"uom attribute", `<swe:uom uom="` + series.expected + `"/>`, true},
+				{"href", `<wml2:uom xlink:href="` + series.href + `"/>`, true},
+				{"unitOfMeasure href", `<wml2:unitOfMeasure xlink:href="` + series.href + `"/>`, true},
+				{"conflicting code", `<wml2:uom code="` + series.other + `"/>`, false},
+				{"conflicting href", `<wml2:uom xlink:href="` + series.otherHref + `"/>`, false},
+				{"unknown href", `<wml2:uom xlink:href="https://example.invalid/unit"/>`, false},
+				{"conflicting declarations", `<wml2:uom code="` + series.other + `" xlink:href="` + series.href + `"/>`, false},
+				{"conflicting elements", `<wml2:uom code="` + series.expected + `"/><swe:uom code="` + series.other + `"/>`, false},
+				{"unknown code", `<swe:uom code="unknown"/>`, false},
+				{"empty declaration", `<wml2:uom/>`, false},
+			} {
+				t.Run(tc.name, func(t *testing.T) {
+					xml := strings.Replace(original, series.marker, series.marker+tc.unit, 1)
+					if tc.unit != "" && xml == original {
+						t.Fatal("fixture marker not found")
+					}
+					var err error
+					if series.name == "observation" {
+						_, err = ParseObservation([]byte(xml), now)
+					} else {
+						_, err = ParseForecast([]byte(xml), now)
+					}
+					if (err == nil) != tc.valid {
+						t.Fatalf("valid=%v err=%v", tc.valid, err)
+					}
+				})
+			}
+		})
+	}
+}

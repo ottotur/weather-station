@@ -59,10 +59,9 @@ API:n yritysvirhe on `cache_durability_uncertain`: muistissa on vanha aineisto,
 mutta uudelleenkäynnistyksessä voidaan lukea uusi tiedosto. Tarkista levyn tila
 ja oikeudet; myöhempi onnistunut haku tallentaa aineiston uudelleen.
 
-`npm audit` raportoi kehitysaikaisen Svelte Vite -liitännäisen `deepmerge`-
-riippuvuudesta matalan vakavuuden haavoittuvuuden GHSA-gcqx-w48m-w2h4.
-Tarkistushetkellä npm ei tarjonnut korjausta; riippuvuus ei ole selaimen
-ajonaikainen riippuvuus.
+Toteutuksen aiemmassa tarkistuksessa `npm audit` raportoi kehitysaikaisesta
+`deepmerge`-riippuvuudesta huomautuksen GHSA-gcqx-w48m-w2h4. Uusimmassa
+2026-11-17 suoritetussa `npm audit` -ajossa ei raportoitu haavoittuvuuksia.
 
 ## FMI-lähde
 
@@ -76,6 +75,15 @@ Vastaus rajataan 2 MiB:iin ja HTTP-aikakatkaisu on 30 sekuntia.
 Lähde: Ilmatieteen laitos, avoin data, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 Havainnon millimetrit muunnetaan senttimetreiksi. `SeaLevelN2000`-ennusteen cm
 on käyttäjän hyväksymä oletus, ei suoraan varmennettu yksikkömetatieto.
+Jos vastaus ilmoittaa yksikkötiedon, valitun sarjan `wml2:uom`- ja
+`swe:uom`- sekä `unitOfMeasure`-elementtien `code`-, `uom`- ja
+`xlink:href`-tiedot tarkistetaan. Hyväksytyt koodit ovat havainnolle `mm`
+ja ennusteelle `cm`; hyväksytyt viitteet ovat täsmälliset QUDT-tunnisteet
+[`unit:MilliM`](https://qudt.org/vocab/unit/MilliM) ja
+[`unit:CentiM`](https://qudt.org/vocab/unit/CentiM). Viitteitä ei haeta
+ajonaikaisesti. Muu tai ristiriitainen ilmoitettu tieto hylätään; puuttuva
+metatieto hyväksytään nykyisellä tulkinnalla eikä ennusteen oletus muutu
+varmennetuksi tiedoksi.
 FMI:n selvityksessä tarkistetut käyttörajat ja niiden lähteet:
 [vedenkorkeusselvitys](feasibility/water-level.md#dokumentoidut-kyselyt-ja-käyttöehdot).
 Hakuvälit ovat 10 ja 30 minuuttia. Toteutuksen koko ketjun testaus on kesken.
