@@ -64,8 +64,9 @@ kalliokohoumat heikentävät hieman itäkoillisen tuulta. Kumpikaan asema ei
 todista testipisteiden paikallistuulta tai lopullisen mökkipaikan edustavuutta.
 
 Molemmat ovat asemametatiedossa automaattisia sääasemia (verkko 121),
-toimintajakson loppu `now`. Tuulisuureiden tuoreutta ja äärellisiä arvoja ei
-ole vielä tarkistettu: varsinaiset havaintonäytteet odottavat hyväksyntää.
+toimintajakson loppu `now`. Käyttäjän hyväksymän Rankin havaintonäytteen
+mittausajat, tuoreus ja tuulisuureiden äärelliset arvot on tarkistettu;
+tulokset ovat luvussa 6. Haapasaaren havaintonäytettä ei haettu.
 
 Metatietolähteet (tarkistettu 2026-11-17):
 
