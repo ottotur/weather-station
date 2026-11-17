@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Go race tests
+        run: go test -race ./...
+      - name: Go vet
+        run: go vet ./...
+      - name: Install web dependencies
+        working-directory: web
+        run: npm ci
+      - name: Check web types
+        working-directory: web
+        run: npm run check
+      - name: Build web
+        working-directory: web
+        run: npm run build
+      - name: Test built web served by Go
+        run: WEATHER_TEST_WEB_DIST=../../web/dist go test -race ./cmd/weather-station
+      - name: Install Chromium
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+      - name: Browser and full-chain tests
+        working-directory: web
+        run: npm test
+      - name: Cross-compile for Linux arm64
+        run: GOOS=linux GOARCH=arm64 GOARM64=v8.0 CGO_ENABLED=0 go build -o "$RUNNER_TEMP/weather-station-linux-arm64" ./cmd/weather-station
