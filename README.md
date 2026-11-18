@@ -1,3 +1,5 @@
+> [!NOTE]
+> Tämä on keskeneräinen vapaa-ajan projekti, jota kehitetään parhaillaan. Ominaisuudet, rakenne ja dokumentaatio voivat muuttua, eikä projektia ole vielä viimeistelty tai tarkoitettu tuotantokäyttöön.
 # Sääasema
 
 Sääasema hakee Haminan vedenkorkeushavainnon ja ennusteen sekä näyttää ne
